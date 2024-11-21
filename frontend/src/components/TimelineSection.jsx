@@ -1,36 +1,74 @@
 import React, { useEffect, useRef } from "react";
 import "./TimelineSection.scss";
-
+import {
+  DoorOpen,
+  Award,
+  Gamepad,
+  Mic,
+  Music,
+  Camera,
+  Smile,
+  PartyPopper,
+} from "lucide-react";
+import rampWalk from "../assets/rampwalk.png";
 const timelineData = [
   {
-    year: "2015",
-    title: "Event One",
-    description: "Description for Event One.",
-    icon: "📩",
+    time: "8:30am - 9:30am",
+    title: "Entry Timing",
+    description: "",
+    icon: <DoorOpen className="w-6 h-6 text-orange-500" />,
   },
   {
-    year: "2016",
-    title: "Event Two",
-    description: "Description for Event Two.",
-    icon: "🔍",
+    time: "",
+    title: "Opening Ceremony",
+    description: "",
+    icon: <Award className="w-6 h-6 text-yellow-500" />,
   },
   {
-    year: "2017",
-    title: "Event Three",
-    description: "Description for Event Three.",
-    icon: "📘",
+    time: "",
+    title: "Fun & Games",
+    description: "",
+    icon: <Gamepad className="w-6 h-6 text-green-500" />,
   },
   {
-    year: "2018",
-    title: "Event Four",
-    description: "Description for Event Four.",
-    icon: "📈",
+    time: "",
+    title: "Ramp Walk",
+    description: "",
+    icon: (
+      <img
+        src={rampWalk}
+        alt="Ramp Walk Icon"
+        className="w-10 h-10 text-purple-500"
+      />
+    ),
   },
   {
-    year: "2019",
-    title: "Event Five",
-    description: "Description for Event Five.",
-    icon: "💡",
+    time: "",
+    title: "Performance",
+    description: "",
+    icon: (
+      <div className="flex space-x-2">
+        <Mic className="w-6 h-6 text-red-500" />
+        <Music className="w-6 h-6 text-blue-500" />
+      </div>
+    ),
+  },
+  {
+    time: "",
+    title: "Photo Session",
+    description: "",
+    icon: <Camera className="w-6 h-6 text-orange-500" />,
+  },
+  {
+    time: "",
+    title: "Self Enjoyment",
+    description: "",
+    icon: (
+      <div className="flex space-x-2">
+        <PartyPopper className="w-6 h-6 text-red-500" />
+        <Smile className="w-6 h-6 text-blue-500" />
+      </div>
+    ),
   },
 ];
 
@@ -78,7 +116,7 @@ const InteractiveTimeline = () => {
           >
             <div className="timeline-content">
               <div className="timeline-icon">{item.icon}</div>
-              <h2 className="timeline-year">{item.year}</h2>
+              <h2 className="timeline-time">{item.time}</h2>
               <h3 className="timeline-event">{item.title}</h3>
               <p className="timeline-description">{item.description}</p>
             </div>
