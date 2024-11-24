@@ -1,4 +1,3 @@
-
 const Footer = () => {
   return (
     <footer className="mt-20 border-t py-10 border-neutral-800 relative font-medium text-white ">
@@ -16,7 +15,7 @@ const Footer = () => {
             Made with <span className="text-red-500">❤</span> by{" "}
             <a
               className="text-blue-400"
-              href="https://instagram.com/ayushroyl"
+              href="https://instagram.com/sri__1448"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -30,7 +29,7 @@ const Footer = () => {
           </h4>
           <div className="flex justify-center space-x-4">
             <a
-              href="#"
+              href="https://instagram.com/sri__1448"
               className="text-pink-400 hover:text-pink-800 transition-colors duration-300"
               aria-label="Instagram"
             >
@@ -52,7 +51,7 @@ const Footer = () => {
               </svg>
             </a>
             <a
-              href="#"
+              href="https://www.linkedin.com/in/sri0777/"
               className="text-blue-300 hover:text-blue-600 transition-colors duration-300"
               aria-label="LinkedIn"
             >
@@ -74,7 +73,7 @@ const Footer = () => {
               </svg>
             </a>
             <a
-              href="#"
+              href="https://github.com/sri0777"
               className="text-zinc-500 hover:text-zinc-200 transition-colors duration-300"
               aria-label="GitHub"
             >

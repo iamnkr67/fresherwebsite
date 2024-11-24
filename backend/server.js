@@ -12,7 +12,6 @@ app.use(session({
   resave: false,
   saveUninitialized:true
 }))
-app.set('view engine', 'ejs');
 
 const contest = require('./routes/contest')
 app.use('/contestant', contest)

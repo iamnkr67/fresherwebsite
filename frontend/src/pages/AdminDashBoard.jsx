@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const AdminDashboard = () => {
-  const [contestants, setContestants] = useState([]); // Store contestants
-  const [seats, setSeats] = useState([]); // Store available seats
-  const [loading, setLoading] = useState(false); // Loading state
-  const [error, setError] = useState(null); // Error state
+  const [contestants, setContestants] = useState([]);
+  const [seats, setSeats] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Fetch contestants data
   const handleViewContestants = async () => {
@@ -14,8 +14,8 @@ const AdminDashboard = () => {
     try {
       const response = await axios.get(
         "http://localhost:3002/contestant/getdata",
-      ); // Replace with your backend URL
-      setContestants(response.data.data); // Assuming the API sends { data: [...] }
+      );
+      setContestants(response.data.data);
     } catch (err) {
       setError(err.message);
     } finally {
