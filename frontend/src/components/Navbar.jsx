@@ -27,7 +27,7 @@ const Navbar = () => {
           </ul>
           <div className="hidden lg:flex justify-center space-x-12 items-center">
             <a
-              href="/login"
+              href="/adminlogin"
               className="bg-gradient-to-r from-orange-500 to-orange-800 py-2 px-3 rounded-md"
             >
               Admin Login
@@ -50,7 +50,7 @@ const Navbar = () => {
             </ul>
             <div className="flex space-x-6">
               <a
-                href="/login"
+                href="/adminlogin"
                 className="py-2 px-3 rounded-md bg-gradient-to-r from-orange-500 to-orange-800"
               >
                 Admin Login

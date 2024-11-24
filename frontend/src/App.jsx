@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // Import React Router components
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
@@ -8,11 +9,41 @@ import Pricing from "./components/Pricing";
 import Testimonials from "./components/Testimonials";
 import ImageSlider from "./components/ImageSlider";
 import TimelineSection from "./components/TimelineSection";
-import BookSeatPage from "./components/BookSeat"; // Assuming BookSeat is inside pages/BookSeatPage
-import LoginPage from "./components/Login";
 import AdminLogin from "./components/AdminLogin";
+import ApplyPerformance from "./components/ApplyPerformance";
+import AdminDashBoard from "./pages/AdminDashBoard";
+import BookedSeats from "./pages/BookedSeats";
+import Contestants from "./pages/Contestants";
+import SeatLayout from "./components/SeatLayout"; // The SeatLayout for displaying the seats
+import SeatModal from "./components/SeatModal"; // The modal to enter details for booking
+import AdminPanel from "./components/AdminPanel"; // The admin panel for confirming bookings
+import Notification from "./components/Notification"; // Notification to show booking status
 
 const App = () => {
+  /*const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSeat, setSelectedSeat] = useState(null);
+  const [notification, setNotification] = useState("");*/
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to check admin login status
+
+  // Handle seat click for booking
+  // const handleSeatClick = (index) => {
+  //   if (seats[index].status === "available") {
+  //     setSelectedSeat(index);
+  //     setIsModalOpen(true);
+  //   } else {
+  //     setNotification("This seat is already booked or pending.");
+  //   }
+  // };
+
+  // Admin confirms the booking
+
+  // Admin login success
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    setIsAdmin(true); // Set the admin state to true after login
+  };
+
   return (
     <Router>
       <div className="App">
@@ -26,9 +57,6 @@ const App = () => {
                 <div className="max-w-7xl mx-auto pt-20 px-6">
                   <HeroSection />
                   <FeatureSection />
-                  {/* <Workflow /> */}
-                  {/* <Pricing /> */}
-                  {/* <Testimonials /> */}
                   <ImageSlider />
                   <TimelineSection />
                   <Footer />
@@ -37,49 +65,48 @@ const App = () => {
             }
           />
 
-          {/* Book Seat Page */}
+          {/* Seat Booking Page */}
           <Route
             path="/book-seat"
             element={
               <>
                 <Navbar />
                 <div className="max-w-7xl mx-auto pt-20 px-6">
-                  <BookSeatPage />
+                  <SeatLayout />
                 </div>
-
-                <Footer />
-              </>
-            }
-          />
-          {/* Login Page */}
-          <Route
-            path="/login"
-            element={
-              <>
-                <Navbar />
-                <div className="max-w-7xl mx-auto pt-20 px-6">
-                  <LoginPage />
-                </div>
-
                 <Footer />
               </>
             }
           />
 
-          {/* AdminLogin Page */}
+          {/* Admin Login */}
           <Route
             path="/adminlogin"
-            element={
-              <>
-                <Navbar />
-                <div className="max-w-7xl mx-auto pt-20 px-6">
-                  <AdminLogin />
-                </div>
+            element={<AdminLogin onLoginSuccess={handleLoginSuccess} />}
+          />
 
-                <Footer />
-              </>
+          {/* Admin Login */}
+          <Route
+            path="/adminlogin"
+            element={<AdminLogin onLoginSuccess={handleLoginSuccess} />}
+          />
+
+          {/* Admin Dashboard */}
+          <Route
+            path="/dashboard"
+            element={
+              isLoggedIn ? (
+                <>
+                  <AdminPanel />
+                  <Footer />
+                </>
+              ) : (
+                <AdminLogin onLoginSuccess={handleLoginSuccess} />
+              )
             }
           />
+
+          {/* Apply for Performance */}
         </Routes>
       </div>
     </Router>

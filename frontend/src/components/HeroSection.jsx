@@ -1,8 +1,20 @@
+import React, { useState } from "react";
 import video1 from "../assets/video1.mp4";
 import video2 from "../assets/video2.mp4";
 import bgvideo from "../assets/videoplayback.mp4";
+import ApplyPerformance from "./ApplyPerformance"; // Import ApplyPerformance component
 
 const HeroSection = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state here
+
+  const openModal = () => {
+    setIsModalOpen(true); // Open the modal
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false); // Close the modal
+  };
+
   return (
     <div className="flex flex-col items-center mt-6 lg:mt-20">
       <video
@@ -27,38 +39,26 @@ const HeroSection = () => {
       </p>
       <div className="flex justify-center my-10">
         <a
-          href="#"
+          href="/book-seat"
           className="bg-gradient-to-r from-purple-500 to-blue-790 py-3 px-4 mx-3 rounded-md border opacity-100 hover:opacity-100 transition duration-300 ease-in-out transform hover:scale-105"
         >
           Reserve Your Seat
         </a>
         <a
-          href="#"
+          onClick={openModal} // Open the modal on click
           className="bg-gradient-to-r from-blue-600 to-purple-790 py-3 px-4 mx-3 rounded-md border opacity-100 hover:opacity-100 transition duration-300 ease-in-out transform hover:scale-105"
         >
           Apply for Performance
         </a>
       </div>
-      {/* <div className="flex mt-10 justify-center">
-        <video
-          autoPlay
-          loop
-          muted
-          className="rounded-lg w-1/2 border border-orange-700 shadow-sm shadow-orange-400 mx-2 my-4"
-        >
-          <source src={video1} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <video
-          autoPlay
-          loop
-          muted
-          className="rounded-lg w-1/2 border border-orange-700 shadow-sm shadow-orange-400 mx-2 my-4"
-        >
-          <source src={video2} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      </div> */}
+
+      {/* Modal Component */}
+      {isModalOpen && (
+        <ApplyPerformance
+          isModalOpen={isModalOpen}
+          closeModal={closeModal} // Pass closeModal function to ApplyPerformance
+        />
+      )}
     </div>
   );
 };

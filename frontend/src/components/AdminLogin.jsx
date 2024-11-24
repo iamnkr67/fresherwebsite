@@ -1,12 +1,25 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const AdminLogin = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+const AdminLogin = ({ onLoginSuccess }) => {
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const navigate = useNavigate(); // For navigation
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const { username, password } = formData;
 
     // Validate inputs
     if (!username || !password) {
@@ -14,15 +27,31 @@ const AdminLogin = () => {
       return;
     }
 
-    // Clear error message
-    setError("");
+    try {
+      setError(""); // Clear any previous errors
+      const response = await axios.post("http://localhost:3002/admin", {
+        username,
+        password,
+      });
 
-    // Handle login logic (e.g., API call)
-    console.log("Admin Username:", username, "Admin Password:", password);
+      if (response.status === 200) {
+        setSuccess("Login successful!");
+        console.log("Response Data:", response.data);
 
-    // Reset form after submission (optional)
-    setUsername("");
-    setPassword("");
+        // Notify parent about login success
+        if (onLoginSuccess) onLoginSuccess();
+
+        // Navigate to the dashboard
+        navigate("/dashboard");
+      } else {
+        setError("Invalid credentials. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      setError(
+        error.response?.data?.message || "An error occurred. Please try again.",
+      );
+    }
   };
 
   return (
@@ -38,6 +67,11 @@ const AdminLogin = () => {
         {error && (
           <p className="text-red-500 text-center mb-4 font-medium">{error}</p>
         )}
+        {success && (
+          <p className="text-green-500 text-center mb-4 font-medium">
+            {success}
+          </p>
+        )}
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="relative">
             <input
@@ -46,8 +80,8 @@ const AdminLogin = () => {
               placeholder="Username"
               required
               className="block w-full px-4 py-3 bg-zinc-700 text-white border border-zinc-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition duration-300"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={formData.username}
+              onChange={handleChange}
             />
             <span className="absolute top-1/2 right-4 transform -translate-y-1/2 text-orange-400">
               <i className="fas fa-user"></i>
@@ -60,8 +94,8 @@ const AdminLogin = () => {
               placeholder="Password"
               required
               className="block w-full px-4 py-3 bg-zinc-700 text-white border border-zinc-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition duration-300"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
             />
             <span className="absolute top-1/2 right-4 transform -translate-y-1/2 text-orange-400">
               <i className="fas fa-lock"></i>
@@ -79,7 +113,7 @@ const AdminLogin = () => {
             Having trouble logging in?
             <a
               className="text-orange-400 hover:text-orange-500 font-medium transition duration-300"
-              href="https://wa.me/91808080808080?text=admin+login+help"
+              href="https://wa.me/+919835916976?text=admin+login+help"
             >
               <br />
               Contact Support
