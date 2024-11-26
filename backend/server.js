@@ -218,7 +218,10 @@ p {
 	</div>
 `;
 
-const browser = await puppeteer.launch();
+const browser = await puppeteer.launch({
+  executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+  args: ['--no-sandbox', '--disable-setuid-sandbox'],
+});
 const page = await browser.newPage();
 const widthInPx = Math.round(80 * 3.77953); // 85.6mm to pixels
 const heightInPx = Math.round(48 * 3.77953); // 54mm to pixels
