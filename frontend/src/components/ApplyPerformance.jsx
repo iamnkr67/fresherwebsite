@@ -35,7 +35,7 @@ const ApplyPerformance = ({ isModalOpen, closeModal }) => {
 
     try {
       const response = await axios.post(
-        "api/contestant",
+        "https://nalandafresher.onrender.com/contestant",
         formData
       );
       if (

@@ -25,7 +25,7 @@ const AdminDashboard = () => {
     setSeats([]);
     setViewMode("contestants");
     try {
-      const response = await axios.get("api/contestant/getData");
+      const response = await axios.get("https://nalandafresher.onrender.com/contestant/getData");
       setContestants(response.data.data);
     } catch (err) {
       setError(err.message);
@@ -94,7 +94,7 @@ const AdminDashboard = () => {
     setViewMode(status); 
 
     try {
-      const response = await axios.get(`api/pending`, {
+      const response = await axios.get(`https://nalandafresher.onrender.com/pending`, {
         params: { status }, 
       });
         const seats = response.data.data;
@@ -125,7 +125,7 @@ const AdminDashboard = () => {
   const handleApprove = async (seatId) => {
     try {
         const response = await axios.patch(
-            `api/pending/${seatId}`,
+            `https://nalandafresher.onrender.com/pending/${seatId}`,
             { status: "approved" }
         );
        
@@ -146,7 +146,7 @@ const AdminDashboard = () => {
   const handleReject = async (seatId) => {
     try {
       const response = await axios.delete(
-        `api/pending/${seatId}`,
+        `https://nalandafresher.onrender.com/pending/${seatId}`,
       );
 
       setSeats((prevSeats) => prevSeats.filter((seat) => seat._id !== seatId));

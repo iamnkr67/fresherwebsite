@@ -26,7 +26,7 @@ const AdminLogin = ({ onLoginSuccess }) => {
     }
 
     try {
-      const response = await axios.post("api/admin/login", {
+      const response = await axios.post("https://nalandafresher.onrender.com/admin/login", {
         username,
         password,
       });

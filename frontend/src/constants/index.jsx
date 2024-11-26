@@ -96,7 +96,7 @@ export const resourcesLinks = [
   { href: "#", text: "Getting Started" },
   { href: "#", text: "Documentation" },
   { href: "#", text: "Tutorials" },
-  { href: "#", text: "API Reference" },
+  { href: "#", text: "https://nalandafresher.onrender.com Reference" },
   { href: "#", text: "Community Forums" },
 ];
 
