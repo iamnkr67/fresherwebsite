@@ -8,7 +8,9 @@ import ImageSlider from "./components/ImageSlider";
 import TimelineSection from "./components/TimelineSection";
 import AdminLogin from "./components/AdminLogin";
 import SeatLayout from "./components/SeatLayout";
-import AdminDashBoard from "./pages/AdminDashBoard"
+import AdminDashBoard from "./pages/AdminDashBoard";
+import IDCard from "./pages/IDCard";
+import AdminNavbar from "./pages/AdminNavbar";
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -57,7 +59,12 @@ const App = () => {
           {/* Admin Login Page */}
           <Route
             path="/adminlogin"
-            element={<AdminLogin onLoginSuccess={handleLoginSuccess} />}
+            element={
+              <>
+              
+                <AdminLogin onLoginSuccess={handleLoginSuccess} />
+              </>
+            }
           />
 
           {/* Admin Dashboard */}
@@ -66,11 +73,14 @@ const App = () => {
             element={
               isLoggedIn ? (
                 <>
+                  <AdminNavbar />
                   <AdminDashBoard />
-                  <Footer />
                 </>
               ) : (
-                <AdminLogin onLoginSuccess={handleLoginSuccess} />
+                <>
+                  <AdminNavbar />
+                  <AdminLogin onLoginSuccess={handleLoginSuccess} />
+                </>
               )
             }
           />

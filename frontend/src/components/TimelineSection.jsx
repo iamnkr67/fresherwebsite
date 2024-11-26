@@ -11,6 +11,7 @@ import {
   PartyPopper,
 } from "lucide-react";
 import rampWalk from "../assets/rampwalk.png";
+import indianCultural from "../assets/indianCultural.png"
 const timelineData = [
   {
     time: "8:30am - 9:30am",
@@ -23,6 +24,18 @@ const timelineData = [
     title: "Opening Ceremony",
     description: "",
     icon: <Award className="w-6 h-6 text-yellow-500" />,
+  },
+   {
+    time: "",
+    title: "Cultural Program",
+    description: "",
+    icon: (
+      <img
+        src={indianCultural}
+        alt="Indian Cultural Program"
+        className="w-14 h-11 text-purple-500"
+      />
+    ),
   },
   {
     time: "",
@@ -38,7 +51,7 @@ const timelineData = [
       <img
         src={rampWalk}
         alt="Ramp Walk Icon"
-        className="w-10 h-10 text-purple-500"
+        className="w-11 h-11 text-purple-500"
       />
     ),
   },

@@ -1,3 +1,4 @@
+
 const Seat = require("../model/seatSchema");
 
 const getAllSeat = async (req, res) => {
@@ -10,4 +11,3 @@ const getAllSeat = async (req, res) => {
 };
 
 module.exports = { getAllSeat };
-

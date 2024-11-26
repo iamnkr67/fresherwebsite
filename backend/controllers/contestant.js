@@ -8,10 +8,7 @@ const add = async (req, res) => {
       return res.status(400).json({ message: "All fields are required." });
     }
 
-    const existingContestant = await Contestant.findOne({ rollNo });
-    if (existingContestant) {
-      return res.status(400).json({ message: "Contestant already exists." });
-    }
+   
 
     const newContestant = new Contestant({ name, rollNo, phone, year, act });
     await newContestant.save();
@@ -30,12 +27,10 @@ const getdata = async (req, res) => {
     const data = await Contestant.find();
     if (data) {
       res.status(200).json({ data });
-    }
-    else
-      return res.status(400).json({"mes":"something wrong"})
+    } else return res.status(400).json({ mes: "something wrong" });
   } catch (error) {
-    res.status(500).json({msg: error.message });
+    res.status(500).json({ msg: error.message });
   }
-}
+};
 
-module.exports = {add,getdata};
+module.exports = { add, getdata };

@@ -1,20 +1,31 @@
 import React, { useState } from "react";
+import { Settings } from "lucide-react";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import axios from "axios";
+import { Download, Home } from "lucide-react";
+import QrCode from "qrcode";
+
 
 const AdminDashboard = () => {
   const [contestants, setContestants] = useState([]);
   const [seats, setSeats] = useState([]);
+  const [approvedSeats, setApprovedSeats] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [viewMode, setViewMode] = useState("none");
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogAction, setDialogAction] = useState(null);
+  const [currentSeat, setCurrentSeat] = useState(null);
 
   // Fetch contestants data
   const handleViewContestants = async () => {
     setLoading(true);
     setError(null);
+    setSeats([]);
+    setViewMode("contestants");
     try {
-      const response = await axios.get(
-        "http://localhost:3002/contestant/getdata",
-      );
+      const response = await axios.get("http://localhost:3002/contestant/getData");
       setContestants(response.data.data);
     } catch (err) {
       setError(err.message);
@@ -23,24 +34,139 @@ const AdminDashboard = () => {
     }
   };
 
-  // Fetch available seats
-  const handleSeeSeatsAvailable = async () => {
+  const generateContestantsPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text("Contestants List", 14, 20);
+
+    const tableColumn = ["Roll No", "Name", "Phone", "Year", "Act"];
+    const tableRows = [];
+
+    contestants.forEach((contestant) => {
+      const rowData = [
+        contestant.rollNo,
+        contestant.name,
+        contestant.phone,
+        contestant.year,
+        contestant.act,
+      ];
+      tableRows.push(rowData);
+    });
+
+    doc.autoTable({
+      startY: 30,
+      head: [tableColumn],
+      body: tableRows,
+    });
+
+    doc.save("ContestantsList.pdf");
+  };
+
+  const generateApprovedSeatsPDF = () => {
+  const doc = new jsPDF();
+  doc.setFontSize(18);
+  doc.text("Approved Seats List", 14, 20);
+
+  const tableColumn = ["Name", "Roll No", "Seat Number", "Semester", "Unique_ID"];
+  const tableRows = [];
+
+  approvedSeats.forEach((seat) => {
+    const seatUID = seat._id
+      ? seat._id.match(/.{1,4}/g).join("-") 
+      : "N/A"; 
+
+    const rowData = [seat.name, seat.rollNo, seat.seat, seat.semester, seatUID];
+    tableRows.push(rowData);
+  });
+  doc.autoTable({
+    startY: 30,
+    head: [tableColumn],
+    body: tableRows,
+  });
+  doc.save("ApprovedSeatsList.pdf");
+};
+
+  const handleSeats = async (status) => {
     setLoading(true);
     setError(null);
+    setSeats([]);
+    setApprovedSeats([]);
+    setViewMode(status); 
+
     try {
-      const response = await axios.get("http://localhost:3002/seats-available"); // Replace with your backend URL
-      setSeats(response.data.data); // Assuming the API sends { data: [...] }
+      const response = await axios.get(`http://localhost:3002/pending`, {
+        params: { status }, 
+      });
+        const seats = response.data.data;
+        setSeats(seats.filter((seat) => seat.status === "pending"));
+        setApprovedSeats(seats.filter((seat) => seat.status === "approved")); 
+    
     } catch (err) {
-      setError(err.message);
+      if (err.response && err.response.status === 400)
+        setError("No seats are booked");
+      else setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  const openConfirmationDialog = (seatId, action) => {
+    setCurrentSeat(seatId);
+    setDialogAction(action);
+    setOpenDialog(true);
+  };
+
+  const closeConfirmationDialog = () => {
+    setOpenDialog(false);
+    setCurrentSeat(null);
+    setDialogAction(null);
+  };
+  
+  const handleApprove = async (seatId) => {
+    try {
+        const response = await axios.patch(
+            `http://localhost:3002/pending/${seatId}`,
+            { status: "approved" }
+        );
+       
+      const seat = approvedSeats.find(seat => seat._id === seatId);
+
+       alert(response.data.message || "Seat approved successfully!");
+      handleSeats("pending"); 
+        handleSeats("approved"); 
+        closeConfirmationDialog();
+    } catch (error) {
+        console.error("Error approving seat:", error);
+        alert("Failed to approve the seat. Please try again.");
+    }
+};
+
+
+  // Reject seat
+  const handleReject = async (seatId) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3002/pending/${seatId}`,
+      );
+
+      setSeats((prevSeats) => prevSeats.filter((seat) => seat._id !== seatId));
+      alert(`Seat rejected successfully`)
+      closeConfirmationDialog();
+    } catch (error) {
+      console.error("Error deleting seat:", error.message);
+      alert("Failed to delete the seat. Please try again.");
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-4">
-      <h1 className="text-4xl font-bold mb-8">Admin Controls</h1>
-
+     
+      <div className="flex items-center space-x-4 mb-8">
+        <Settings className="w-8 h-8 text-orange-500" />
+        <h1 className="text-4xl font-bold">Admin Controls</h1>
+        <Settings className="w-8 h-8 text-orange-500" />
+      </div>
+      
       <div className="space-y-4 mb-8">
         <button
           onClick={handleViewContestants}
@@ -48,20 +174,31 @@ const AdminDashboard = () => {
         >
           View Contestants
         </button>
+        {viewMode === "contestants" && contestants.length > 0 && (
+          <button
+            onClick={generateContestantsPDF}
+            className="bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-red-600 hover:to-red-800 transition duration-300 ml-4"
+          >
+            Download Contestants PDF
+          </button>
+        )}
         <button
-          onClick={handleSeeSeatsAvailable}
+          onClick={() => handleSeats("pending")}
           className="bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300 ml-4"
         >
-          See Seats Available
+          See Pending Seats
+        </button>
+
+        <button
+          onClick={() => handleSeats("approved")}
+          className="bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-purple-600 hover:to-purple-800 transition duration-300 ml-4"
+        >
+          See Approved Seats
         </button>
       </div>
-
-      {/* Conditional Rendering */}
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
-
-      {/* Contestants Table */}
-      {contestants.length > 0 && (
+      {viewMode === "contestants" && contestants.length > 0 && (
         <div className="w-full max-w-4xl mb-8">
           <h2 className="text-2xl font-semibold mb-4">Contestants</h2>
           <table className="w-full text-left border-collapse border border-gray-700">
@@ -98,37 +235,143 @@ const AdminDashboard = () => {
           </table>
         </div>
       )}
-
-      {/* Available Seats Table */}
-      {seats.length > 0 && (
-        <div className="w-full max-w-4xl">
-          <h2 className="text-2xl font-semibold mb-4">Available Seats</h2>
+      {/* seats.length > 0 */}
+      {viewMode === "pending" && (
+        <div className="w-full max-w-4xl mx-auto">
+          <h2 className="text-2xl font-semibold mb-4 text-center">
+            Pending Seat Requests
+          </h2>
           <table className="w-full text-left border-collapse border border-gray-700">
             <thead>
-              <tr className="bg-gray-800">
+              <tr className="bg-gray-800 text-white">
+                <th className="border border-gray-600 px-4 py-2">Name</th>
+                <th className="border border-gray-600 px-4 py-2">Roll No</th>
                 <th className="border border-gray-600 px-4 py-2">
                   Seat Number
                 </th>
-                <th className="border border-gray-600 px-4 py-2">Location</th>
+                <th className="border border-gray-600 px-4 py-2">Semester</th>
                 <th className="border border-gray-600 px-4 py-2">Status</th>
+                <th className="border border-gray-600 px-4 py-2">Actions</th>
               </tr>
             </thead>
             <tbody>
               {seats.map((seat) => (
-                <tr key={seat._id} className="bg-gray-700">
+                <tr key={seat._id} className="bg-gray-700 text-white">
                   <td className="border border-gray-600 px-4 py-2">
-                    {seat.seatNumber}
+                    {seat.name}
                   </td>
                   <td className="border border-gray-600 px-4 py-2">
-                    {seat.location}
+                    {seat.rollNo}
                   </td>
                   <td className="border border-gray-600 px-4 py-2">
-                    {seat.available ? "Available" : "Booked"}
+                    {seat.seat}
+                  </td>
+                  <td className="border border-gray-600 px-4 py-2">
+                    {seat.semester}
+                  </td>
+                  <td className="border border-gray-600 px-4 py-2">
+                    {seat.status}
+                  </td>
+                  <td className="border border-gray-600 px-4 py-2">
+                    <button
+                      className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded"
+                      onClick={() =>
+                        openConfirmationDialog(seat._id, "approve")
+                      }
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded ml-2"
+                      onClick={() => openConfirmationDialog(seat._id, "reject")}
+                    >
+                      Reject
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+      {/* && approvedSeats.length > 0 */}
+      {viewMode === "approved" && (
+        <div className="w-full max-w-4xl mx-auto">
+          <h2 className="text-2xl font-semibold mb-4 text-center">
+            Approved Seat Requests
+          </h2>
+
+          {viewMode === "approved" && approvedSeats.length > 0 && (
+            <button
+              onClick={generateApprovedSeatsPDF}
+              className="flex items-center bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-red-600 hover:to-red-800 transition duration-300 mr-4 mb-4"
+            >
+              Approved PDF
+              <Download className="w-5 h-5 mr-2" />
+            </button>
+          )}
+          <table className="w-full text-left border-collapse border border-gray-700">
+            <thead>
+              <tr className="bg-gray-800 text-white">
+                <th className="border border-gray-600 px-4 py-2">Unique ID</th>
+                <th className="border border-gray-600 px-4 py-2">Name</th>
+                <th className="border border-gray-600 px-4 py-2">Roll No</th>
+                <th className="border border-gray-600 px-4 py-2">
+                  Seat Number
+                </th>
+                <th className="border border-gray-600 px-4 py-2">Semester</th>
+              </tr>
+            </thead>
+            <tbody>
+              {approvedSeats.map((seat) => (
+                <tr key={seat._id} className="bg-gray-700 text-white">
+                   <td className="border border-gray-600 px-4 py-2">
+                    {seat._id}
+                  </td>
+                  <td className="border border-gray-600 px-4 py-2">
+                    {seat.name}
+                  </td>
+                  <td className="border border-gray-600 px-4 py-2">
+                    {seat.rollNo}
+                  </td>
+                  <td className="border border-gray-600 px-4 py-2">
+                    {seat.seat}
+                  </td>
+                  <td className="border border-gray-600 px-4 py-2">
+                    {seat.semester}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {openDialog && (
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-700 bg-opacity-50">
+          <div className="bg-white text-black p-8 rounded-lg">
+            <p>
+              Are you sure you want to{" "}
+              {dialogAction === "approve" ? "approve" : "reject"} this seat?
+            </p>
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={
+                  dialogAction === "approve"
+                    ? () => handleApprove(currentSeat)
+                    : () => handleReject(currentSeat)
+                }
+                className="bg-green-500 text-white px-6 py-2 rounded-lg"
+              >
+                Confirm
+              </button>
+              <button
+                onClick={closeConfirmationDialog}
+                className="bg-gray-500 text-white px-6 py-2 rounded-lg"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

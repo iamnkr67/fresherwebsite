@@ -8,7 +8,6 @@ import image4 from "../assets/momentsFresher/image4.jpg";
 import image5 from "../assets/momentsFresher/image5.jpg";
 import image6 from "../assets/momentsFresher/image6.jpg";
 import image7 from "../assets/momentsFresher/image7.jpg";
-import image8 from "../assets/momentsFresher/image8.jpg";
 
 const ImageSlider = () => {
   const images = [
@@ -19,7 +18,7 @@ const ImageSlider = () => {
     image5,
     image6,
     image7,
-    image8,
+
   ]; // Array of images
 
   const [currentIndex, setCurrentIndex] = useState(0);

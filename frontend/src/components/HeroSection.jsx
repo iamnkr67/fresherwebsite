@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import video1 from "../assets/video1.mp4";
-import video2 from "../assets/video2.mp4";
 import bgvideo from "../assets/videoplayback.mp4";
 import ApplyPerformance from "./ApplyPerformance"; // Import ApplyPerformance component
 
@@ -30,7 +28,7 @@ const HeroSection = () => {
         Fresher's & Farewell Party 2024
         <span className="bg-gradient-to-r from-orange-500 to-red-800 text-transparent bg-clip-text">
           {" "}
-          for BA English (Hons.)
+          for English Department
         </span>
       </h1>
       <p className="mt-10 text-lg text-center text-neutral-500 max-w-4xl">

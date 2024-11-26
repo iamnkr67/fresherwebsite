@@ -41,7 +41,7 @@ const AdminLogin = ({ onLoginSuccess }) => {
         type: "error",
         text:
           error.response?.data?.message ||
-          "An error occurred. Please try again.",
+          "An error occurred. Please try again",
       });
     }
   };

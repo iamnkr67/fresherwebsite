@@ -6,8 +6,7 @@ const loginAdmin = async (req, res) => {
     const admin = await Admin.findOne({ username, password });
 
     if (admin) {
-      req.session.user = username;
-      res.json({ message: "Successful" });
+      res.status(200).json({ message: "Successful" });
     } else {
       res.status(400).json({ message: "Invalid Credentials" });
     }

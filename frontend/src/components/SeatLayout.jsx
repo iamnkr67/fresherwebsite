@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./ToastContainer.css";
 import axios from "axios";
 
 const SeatLayout = () => {
@@ -17,7 +20,6 @@ const SeatLayout = () => {
     const fetchSeats = async () => {
       try {
         const res = await axios.get("http://localhost:3002/pending");
-        console.log(res.data.data);
         const pendingSeats = res.data.data.reduce((acc, seat) => {
           acc[seat.seat] = seat.status;
           return acc;
@@ -32,8 +34,13 @@ const SeatLayout = () => {
 
   // Handle seat click
   const handleSeatClick = (seat) => {
-    if (seatStatus[seat] === "pending" || seatStatus[seat] === "approved") {
-      console.log(`Seat ${seat} is ${seatStatus[seat]} and cannot be booked.`);
+    if (seatStatus[seat] === "pending") {
+      toast.warning(`Seat ${seat} is currently pending and cannot be booked.`);
+      return;
+    }
+
+    if (seatStatus[seat] === "approved") {
+      toast.error(`Seat ${seat} has already been booked.`);
       return;
     }
     setSelectedSeat(seat);
@@ -56,29 +63,59 @@ const SeatLayout = () => {
   const getSeatColor = (seat) => {
     if (seatStatus[seat] === "pending") return "orange";
     if (seatStatus[seat] === "approved") return "#00B386";
-    return ""; // Default color for available seats
+    return "";
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (seatStatus[selectedSeat] === "pending") {
+      toast.warning(
+        `Seat ${selectedSeat} is currently pending and cannot be booked.`,
+      );
+      return;
+    }
+    if (seatStatus[selectedSeat] === "approved") {
+      toast.error(`Seat ${selectedSeat} has already been booked.`);
+      return;
+    }
     try {
-      // Send data to admin via the updated API endpoint
       const response = await axios.post("http://localhost:3002/pending/", {
         seat: selectedSeat,
         ...formData,
       });
+      console.log(response.data.message);
 
-      console.log("Booking details sent successfully!", response.data);
+      toast.success(`Seat ${selectedSeat} successfully added!`);
+      setSeatStatus((prev) => ({
+        ...prev,
+        [selectedSeat]: "pending",
+      }));
     } catch (error) {
-      console.error("Error sending booking details:", error);
+      if (error.response?.status === 400 && error.response.data?.message) {
+        if (error.response.data.message === "Roll number already booked.") {
+          toast.warning(
+            "Roll number already exists. Please enter a different one.",
+          );
+        } else {
+          toast.error(error.response.data.message); 
+        }
+      } else {
+        toast.error("An error occurred. Please try again.");
+      }
+      console.error("Error submitting seat data:", error);
     }
-
     handleCloseModal();
   };
 
   return (
     <div class="p-2 min-h-screen flex flex-col items-center justify-center">
+      <div>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          className="toast-container"
+        />
+      </div>
       <h1 class="text-center text-2xl font-bold mb-4">
         <i class="fas fa-film"></i> &nbsp; Book Your Seats Now!
       </h1>
@@ -110,7 +147,7 @@ const SeatLayout = () => {
                     {seat}
                   </div>
                 ))}
-                <div className="w-4"></div>{" "}
+                <div className="w-6"></div>{" "}
                 {["A5", "A4", "A3", "A2", "A1"].map((seat, index) => (
                   <div
                     key={index}
@@ -142,7 +179,7 @@ const SeatLayout = () => {
                   </div>
                 ))}
                 {/* Custom gap between B6 and B5 */}
-                <div className="w-4"></div>{" "}
+                <div className="w-6"></div>{" "}
                 {/* Adjust the width to create the gap */}
                 {/* B section continues */}
                 {["B5", "B4", "B3", "B2", "B1"].map((seat, index) => (
@@ -175,7 +212,7 @@ const SeatLayout = () => {
                   </div>
                 ))}
                 {/* Gap between C8 and C7 */}
-                <div className="w-4"></div>{" "}
+                <div className="w-6"></div>{" "}
                 {/* Adjust this width for the gap */}
                 {/* C section continues */}
                 {["C6", "C5", "C4", "C3", "C2", "C1"].map((seat, index) => (
@@ -206,7 +243,7 @@ const SeatLayout = () => {
                   </div>
                 ))}
                 {/* Gap between D8 and D7 */}
-                <div className="w-4"></div>{" "}
+                <div className="w-6"></div>{" "}
                 {/* Adjust this width for the gap */}
                 {/* D section continues */}
                 {["D6", "D5", "D4", "D3", "D2", "D1"].map((seat, index) => (
@@ -235,7 +272,7 @@ const SeatLayout = () => {
                   </div>
                 ))}
                 {/* Gap between E8 and E7 */}
-                <div className="w-4"></div>{" "}
+                <div className="w-6"></div>{" "}
                 {/* Adjust this width for the gap */}
                 {/* E section continues */}
                 {["E6", "E5", "E4", "E3", "E2", "E1"].map((seat, index) => (
@@ -266,7 +303,7 @@ const SeatLayout = () => {
                   ),
                 )}
                 {/* Gap between F8 and F7 */}
-                <div className="w-4"></div>{" "}
+                <div className="w-6"></div>{" "}
                 {/* Adjust this width for the gap */}
                 {/* F section continues */}
                 {["F7", "F6", "F5", "F4", "F3", "F2", "F1"].map(
@@ -298,7 +335,7 @@ const SeatLayout = () => {
                   ),
                 )}
                 {/* Gap between G8 and G7 */}
-                <div className="w-4"></div>{" "}
+                <div className="w-6"></div>{" "}
                 {/* Adjust this width for the gap */}
                 {/* G section continues */}
                 {["G7", "G6", "G5", "G4", "G3", "G2", "G1"].map(
@@ -330,7 +367,7 @@ const SeatLayout = () => {
                   ),
                 )}
                 {/* Gap between H9 and H8 */}
-                <div className="w-4"></div>{" "}
+                <div className="w-6"></div>{" "}
                 {/* Adjust this width for the gap */}
                 {/* H section continues */}
                 {["H8", "H7", "H6", "H5", "H4", "H3", "H2", "H1"].map(
@@ -362,7 +399,7 @@ const SeatLayout = () => {
                   ),
                 )}
                 {/* Gap between I9 and I8 */}
-                <div className="w-4"></div>{" "}
+                <div className="w-6"></div>{" "}
                 {/* Adjust this width for the gap */}
                 {/* I section continues */}
                 {["I8", "I7", "I6", "I5", "I4", "I3", "I2", "I1"].map(
@@ -394,7 +431,7 @@ const SeatLayout = () => {
                   ),
                 )}
                 {/* Gap between J9 and J8 */}
-                <div className="w-4"></div>{" "}
+                <div className="w-6"></div>{" "}
                 {/* Adjust this width for the gap */}
                 {/* J section continues */}
                 {["J8", "J7", "J6", "J5", "J4", "J3", "J2", "J1"].map(
@@ -423,7 +460,6 @@ const SeatLayout = () => {
                   "K12",
                   "K11",
                   "K10",
-                  "K9",
                 ].map((seat, index) => (
                   <div
                     key={index}
@@ -435,10 +471,10 @@ const SeatLayout = () => {
                   </div>
                 ))}
                 {/* Gap between K9 and K8 */}
-                <div className="w-4"></div>{" "}
+                <div className="w-6"></div>{"   "}
                 {/* Adjust this width for the gap */}
                 {/* K section continues */}
-                {["K8", "K7", "K6", "K5", "K4", "K3", "K2", "K1"].map(
+                {["K9","K8", "K7", "K6", "K5", "K4", "K3", "K2", "K1"].map(
                   (seat, index) => (
                     <div
                       key={index}
@@ -621,6 +657,7 @@ const SeatLayout = () => {
               <div className="flex justify-between space-x-4 mt-6">
                 <button
                   type="submit"
+                  onClick={handleSubmit}
                   className="w-full py-3 text-white font-semibold rounded-lg bg-gradient-to-r from-orange-500 to-red-800 hover:from-orange-200 hover:to-orange-800 transition duration-300"
                 >
                   Add Seat
