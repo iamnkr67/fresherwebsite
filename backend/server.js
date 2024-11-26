@@ -28,7 +28,7 @@ app.use("/pending", pendingData);
 
 const Seat = require("./model/pendingSchema");
 
-cron.schedule("*/5 * * * *", async () => { // Runs every 5 minutes
+cron.schedule("*/1 * * * *", async () => { // Runs every 5 minutes
   try {
     console.log("Checking for approved seats...");
     
@@ -239,11 +239,15 @@ await browser.close();
 
         // Send Email
         const transporter = nodemailer.createTransport({
-          service: "Gmail",
+			host: "smtp.gmail.com",
+			port:587,
+			secure:false,
           auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS,
-          },
+			},
+			debug: true,
+		    logger: true,
         });
 
         await transporter.sendMail({

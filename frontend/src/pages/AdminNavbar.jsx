@@ -62,23 +62,7 @@ const AdminNavbar = () => {
               >
                 Home
               </a>
-            </li>
-            <li>
-              <a
-                href="/dashboard"
-                className="block text-white hover:text-orange-500 transition duration-200"
-              >
-                Dashboard
-              </a>
-            </li>
-            <li>
-              <a
-                href="/settings"
-                className="block text-white hover:text-orange-500 transition duration-200"
-              >
-                Settings
-              </a>
-            </li>
+            </li> 
           </ul>
         )}
       </div>
