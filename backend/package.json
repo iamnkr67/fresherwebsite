@@ -5,8 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "build": "npx puppeteer browsers install chrome && npm install",
-     "postbuild": "npx puppeteer install"
+    "build": "npm install",
+    "postinstall": "apt-get update && apt-get install -y chromium"
   },
   "keywords": [],
   "author": "",
