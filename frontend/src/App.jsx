@@ -9,7 +9,6 @@ import TimelineSection from "./components/TimelineSection";
 import AdminLogin from "./components/AdminLogin";
 import SeatLayout from "./components/SeatLayout";
 import AdminDashBoard from "./pages/AdminDashBoard";
-import IDCard from "./pages/IDCard";
 import AdminNavbar from "./pages/AdminNavbar";
 
 const App = () => {
