@@ -28,7 +28,7 @@ app.use("/pending", pendingData);
 
 const Seat = require("./model/pendingSchema");
 
-cron.schedule("*/5 * * * *", async () => { // Runs every 5 minutes
+cron.schedule("*/2 * * * *", async () => { // Runs every 2 minutes
   try {
     console.log("Checking for approved seats...");
     
