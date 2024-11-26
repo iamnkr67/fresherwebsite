@@ -1,12 +1,11 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "build": "npm install",
-    "postinstall": "apt-get update && apt-get install -y chromium"
+    "start": "npx nodemon ./server.js",
+    "build": "npm install -y"
   },
   "keywords": [],
   "author": "",
@@ -28,5 +27,5 @@
     "qrcode": "^1.5.4",
     "router": "^1.3.8"
   },
-  "description": ""
+  "description": "Backend of Freshers Website"
 }
