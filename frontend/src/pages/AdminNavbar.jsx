@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import logo from "../assets/logo.png";
+import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
 const AdminNavbar = () => {
@@ -11,15 +12,16 @@ const AdminNavbar = () => {
     <nav className="sticky top-0 z-50 py-3 backdrop-blur-lg border-b border-neutral-700/80 bg-gray-900 text-white">
       <div className="container px-4 sm:px-6 lg:px-8 mx-auto flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center">
-        
-          <img
-            className="h-10 w-10 mr-2"
-            src={logo} // Replace with the correct path for your logo
-            alt="Logo"
-          />
-          <span className="text-xl font-bold tracking-tight">Fresher</span>
-        </div>
+       <div className="flex items-center">
+      <Link to="/" className="flex items-center">
+        <img
+          className="h-10 w-10 mr-2"
+          src={logo} // Replace with the correct path for your logo
+          alt="Logo"
+        />
+        <span className="text-xl font-bold tracking-tight">Fresher</span>
+      </Link>
+    </div>
 
         {/* Desktop Navigation */}
         <ul className="hidden lg:flex space-x-8">
