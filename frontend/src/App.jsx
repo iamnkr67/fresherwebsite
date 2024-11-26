@@ -6,7 +6,7 @@ import FeatureSection from "./components/FeatureSection";
 import Footer from "./components/Footer";
 import ImageSlider from "./components/ImageSlider";
 import TimelineSection from "./components/TimelineSection";
-import AdminLogin from "./components/AdminLogin";
+import AdminLogin from "./pages/AdminLogin";
 import SeatLayout from "./components/SeatLayout";
 import AdminDashBoard from "./pages/AdminDashBoard";
 import AdminNavbar from "./pages/AdminNavbar";

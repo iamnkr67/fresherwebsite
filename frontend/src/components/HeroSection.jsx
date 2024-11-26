@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import bgvideo from "../assets/videoplayback.mp4";
-import ApplyPerformance from "./ApplyPerformance"; // Import ApplyPerformance component
+import ApplyPerformance from "../pages/ApplyPerformance"; // Import ApplyPerformance component
 
 const HeroSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state here
