@@ -257,7 +257,8 @@ await browser.close();
       <p>🎊 You are warmly invited to the <strong>Freshers and Farewell Celebration 2024</strong> hosted by the Department of English, Nalanda College. 🎉</p>
 
       <p>✨ <strong>Your seat is confirmed!</strong>  
-      🎟️ <strong>Seat No:</strong> ${seat}</p>  
+      🎟️ <strong>Seat No:</strong> ${seat}<br/>
+	      <strong>Your UniqueID code:</strong> ${uniqueId}</p>
 
       <p>We are thrilled to have you join us as we celebrate this special occasion filled with joy, memories, and new beginnings. 🌟</p>
 
@@ -269,8 +270,8 @@ await browser.close();
       </ul>
 
       <p>📅 <strong>Mark Your Calendar</strong>:</p>
-      <p>🗓️ Date: [Insert Date Here]</p>
-      <p>📍 Venue: [Insert Venue Here]</p>
+      <p>🗓️ Date: Yet to be Announced...</p>
+      <p>📍 Venue: Auditorium, Nalanda College</p>
 
       <p>See you there!</p>
 
@@ -282,7 +283,7 @@ await browser.close();
   `,
           attachments: [
             {
-              filename: `${name}-ID-Card-${uniqueId}.pdf`,
+              filename: `${name}-Entry-ID-Card.pdf`,
               path: pdfPath,
             },
           ],
