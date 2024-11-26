@@ -119,37 +119,40 @@ const AdminDashboard = () => {
     setDialogAction(null);
   };
 
-  const handleApprove = async (seatId) => {
+   const handleApprove = async (seatId) => {
     try {
-      const response = await axios.patch(
-        `https://nalandafresher.onrender.com/pending/${seatId}`,
-        { status: "approved" }
-      );
+        const response = await axios.patch(
+            `https://nalandafresher.onrender.com/pending/${seatId}`,
+            { status: "approved" }
+        );
+       
+      const seat = approvedSeats.find(seat => seat._id === seatId);
 
-      alert(response.data.message || "Seat approved successfully!");
-      handleSeats("pending");
-      handleSeats("approved");
-      closeConfirmationDialog();
+       alert(response.data.message || "Seat approved successfully!");
+      handleSeats("pending"); 
+        handleSeats("approved"); 
+        closeConfirmationDialog();
     } catch (error) {
-      console.error("Error approving seat:", error);
-      alert("Failed to approve the seat. Please try again.");
+        console.error("Error approving seat:", error);
+        alert("Failed to approve the seat. Please try again.");
     }
-  };
+};
 
   const handleReject = async (seatId) => {
     try {
       const response = await axios.delete(
-        `https://nalandafresher.onrender.com/pending/${seatId}`
+        `https://nalandafresher.onrender.com/pending/${seatId}`,
       );
 
       setSeats((prevSeats) => prevSeats.filter((seat) => seat._id !== seatId));
-      alert(`Seat rejected successfully`);
+      alert(`Seat rejected successfully`)
       closeConfirmationDialog();
     } catch (error) {
       console.error("Error deleting seat:", error.message);
       alert("Failed to delete the seat. Please try again.");
     }
   };
+
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-900 text-white p-4">
@@ -262,14 +265,16 @@ const AdminDashboard = () => {
                     {seat._id.match(/.{1,4}/g).join("-")}
                   </td>
                   <td className="border border-gray-600 px-4 py-2">
-                    <button
-                      className="text-green-500 hover:underline mr-4"
-                      onClick={() => openConfirmationDialog(seat._id, "approve")}
+                          <button
+                      className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded"
+                      onClick={() =>
+                        openConfirmationDialog(seat._id, "approve")
+                      }
                     >
                       Approve
                     </button>
                     <button
-                      className="text-red-500 hover:underline"
+                      className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded ml-2"
                       onClick={() => openConfirmationDialog(seat._id, "reject")}
                     >
                       Reject
