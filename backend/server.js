@@ -2,9 +2,10 @@ const express = require("express");
 const app = express();
 const dotenv = require("dotenv").config();
 const bodyParser = require("body-parser");
-const PORT = process.env.PORT || 3000; // Default port if not in .env
+const PORT = process.env.PORT;
 const db = require("./config/dbConnect");
 const cors = require("cors");
+
 const nodemailer = require("nodemailer");
 const QRCode = require("qrcode");
 const puppeteer = require("puppeteer");
@@ -15,7 +16,7 @@ const path = require("path");
 app.use(cors());
 app.use(express.json());
 
-// Import routes
+
 const contest = require("./routes/contest");
 app.use("/contestant", contest);
 
@@ -27,30 +28,32 @@ app.use("/pending", pendingData);
 
 const Seat = require("./model/pendingSchema");
 
-// Cron job to process approved seats and send emails
-cron.schedule("*/1 * * * *", async () => {
-  console.log("Checking for approved seats...");
-
-  const tempDir = path.join(__dirname, "temp");
-  if (!fs.existsSync(tempDir)) {
-    fs.mkdirSync(tempDir, { recursive: true });
-  }
-
+cron.schedule("*/1 * * * *", async () => { // Runs every 10 minutes
   try {
+    console.log("Checking for approved seats...");
+    
+    const tempDir = path.join(__dirname, "temp");
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true });
+    }
+    // Find all users with approved status and email not sent
     const approvedUsers = await Seat.find({ status: "approved", emailSent: false });
 
     for (const user of approvedUsers) {
       const { name, rollNo, semester, seat, email, _id } = user;
-      const uniqueId = _id.toString();
 
+      // Generate the ID card and QR code as in the previous code
       try {
+		  const uniqueId = _id.toString();
+
         // Generate QR Code
         const qrData = JSON.stringify({ name, rollNo, semester, seat, uniqueId });
-        const qrCodePath = path.join(tempDir, `qrcode-${uniqueId}.png`);
+        const qrCodePath = `./temp/qrcode-${uniqueId}.png`;
         await QRCode.toFile(qrCodePath, qrData);
 
         // ID Card HTML Template
-        const idCardHtml = ` <style>
+        const idCardHtml = `
+     <style>
     body {
 			background-color: transparent;
 			font-family:'verdana';
@@ -215,31 +218,41 @@ p {
 	</div>
 `;
 
-        // Launch Puppeteer with proper configuration
-        const browser = await puppeteer.launch({
-          executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
-          args: ["--no-sandbox", "--disable-setuid-sandbox"], // Required for environments like Render
-        });
+const browser = await puppeteer.launch({
+  executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+  args: ['--no-sandbox', '--disable-setuid-sandbox'],
+});
+const page = await browser.newPage();
+const widthInPx = Math.round(80 * 3.77953); // 85.6mm to pixels
+const heightInPx = Math.round(48 * 3.77953); // 54mm to pixels
 
-        const page = await browser.newPage();
-        const pdfPath = path.join(tempDir, `${name}-idCard.pdf`);
+await page.setViewport({ width: widthInPx, height: heightInPx });
+await page.setContent(idCardHtml, { waitUntil: "domcontentloaded" });
 
-        await page.setContent(idCardHtml, { waitUntil: "domcontentloaded" });
-        await page.pdf({ path: pdfPath, format: "A4", printBackground: true, width: `${widthInPx}px`, height:`${heightInPx}px`, pageRanges:"1",  });
-        await browser.close();
+const pdfPath = `./temp/idcard-${uniqueId}.pdf`;
+await page.pdf({
+  path: pdfPath,
+  printBackground: true,
+  format : "A4",
+  width: `${widthInPx}px`,
+  height: `${heightInPx}px`,
+  pageRanges: "1",
+});
+await browser.close();
 
-        // Configure Nodemailer
+        // Send Email
         const transporter = nodemailer.createTransport({
-          host: "smtp.gmail.com",
-          port: 587,
-          secure: false,
+			host: "smtp.gmail.com",
+			port:587,
+			secure:false,
           auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS,
-          },
+			},
+			debug: true,
+		    logger: true,
         });
 
-        // Send Email with attachment
         await transporter.sendMail({
           from: `"Freshers" <${process.env.EMAIL_USER}>`,
           to: email,
@@ -283,20 +296,21 @@ p {
           ],
         });
 
-        // Mark email as sent in the database
-        await Seat.findByIdAndUpdate(_id, { emailSent: true });
+        // Mark email as sent
+        await Seat.findByIdAndUpdate(user._id, { emailSent: true });
 
-        // Clean up temporary files
-        await fs.promises.unlink(qrCodePath);
-        await fs.promises.unlink(pdfPath);
+        // Cleanup Temp Files
+       await fs.promises.unlink(qrCodePath).catch((err) => console.error("Error deleting QR code file:", err));
+       await fs.promises.unlink(pdfPath).catch((err) => console.error("Error deleting PDF file:", err));
+
 
         console.log(`Email sent to ${email}`);
-      } catch (error) {
-        console.error(`Error processing user ${email}:`, error);
+      } catch (err) {
+        console.error(`Error processing user ${email}:`, err);
       }
     }
-  } catch (error) {
-    console.error("Error in cron job:", error);
+  } catch (err) {
+    console.error("Error checking for approved seats:", err);
   }
 });
 
