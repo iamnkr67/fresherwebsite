@@ -297,8 +297,9 @@ await browser.close();
         await Seat.findByIdAndUpdate(user._id, { emailSent: true });
 
         // Cleanup Temp Files
-        fs.unlinkSync(qrCodePath);
-        fs.unlinkSync(pdfPath);
+       await fs.promises.unlink(qrCodePath).catch((err) => console.error("Error deleting QR code file:", err));
+       await fs.promises.unlink(pdfPath).catch((err) => console.error("Error deleting PDF file:", err));
+
 
         console.log(`Email sent to ${email}`);
       } catch (err) {
