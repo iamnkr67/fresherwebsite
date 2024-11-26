@@ -12,13 +12,13 @@ const AdminNavbar = () => {
       <div className="container px-4 sm:px-6 lg:px-8 mx-auto flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center">
-          <a href="/">
+        
           <img
             className="h-10 w-10 mr-2"
             src={logo} // Replace with the correct path for your logo
             alt="Logo"
           />
-          <span className="text-xl font-bold tracking-tight">Fresher</span> </a>
+          <span className="text-xl font-bold tracking-tight">Fresher</span>
         </div>
 
         {/* Desktop Navigation */}
