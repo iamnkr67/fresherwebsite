@@ -26,37 +26,12 @@ app.use("/admin", adminRouter);
 const pendingData = require("./routes/pending");
 app.use("/pending", pendingData);
 
-
-// app.post("/send-email", async (req, res) => {
-//   const { to, subject, body } = req.body;
-
-//   try {
-//     const transporter = nodemailer.createTransport({
-//       service: "Gmail",
-//       auth: {
-//         user: process.env.EMAIL_USER,
-//         pass: process.env.EMAIL_PASS,
-//       },
-//     });
-
-//     await transporter.sendMail({
-//       from: `"Admin" <${process.env.EMAIL_USER}>`,
-//       to,
-//       subject,
-//       text: body,
-//     });
-
-//     res.status(200).send({ message: "Email sent successfully!" });
-//   } catch (error) {
-//     console.error("Error sending email:", error);
-//     res.status(500).send({ message: "Failed to send email" });
-//   }
-// });
-
 const Seat = require("./model/pendingSchema");
 
-cron.schedule("*/10 * * * *", async () => { // Runs every 5 minutes
+cron.schedule("*/5 * * * *", async () => { // Runs every 5 minutes
   try {
+    console.log("Checking for approved seats...");
+    
     const tempDir = path.join(__dirname, "temp");
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir, { recursive: true });
@@ -70,8 +45,6 @@ cron.schedule("*/10 * * * *", async () => { // Runs every 5 minutes
       // Generate the ID card and QR code as in the previous code
       try {
 		  const uniqueId = _id.toString();
-	
-		
 
         // Generate QR Code
         const qrData = JSON.stringify({ name, rollNo, semester, seat, uniqueId });
@@ -321,6 +294,8 @@ await browser.close();
         // Cleanup Temp Files
         fs.unlinkSync(qrCodePath);
         fs.unlinkSync(pdfPath);
+
+        console.log(`Email sent to ${email}`);
       } catch (err) {
         console.error(`Error processing user ${email}:`, err);
       }
