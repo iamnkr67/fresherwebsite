@@ -26,7 +26,7 @@ const AdminLogin = ({ onLoginSuccess }) => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3002/admin/login", {
+      const response = await axios.post("api/admin/login", {
         username,
         password,
       });

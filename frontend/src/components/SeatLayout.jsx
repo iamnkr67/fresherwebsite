@@ -19,7 +19,7 @@ const SeatLayout = () => {
   useEffect(() => {
     const fetchSeats = async () => {
       try {
-        const res = await axios.get("http://localhost:3002/pending");
+        const res = await axios.get("api/pending");
         const pendingSeats = res.data.data.reduce((acc, seat) => {
           acc[seat.seat] = seat.status;
           return acc;
@@ -79,7 +79,7 @@ const SeatLayout = () => {
       return;
     }
     try {
-      const response = await axios.post("http://localhost:3002/pending/", {
+      const response = await axios.post("api/pending/", {
         seat: selectedSeat,
         ...formData,
       });

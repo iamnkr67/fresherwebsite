@@ -25,7 +25,7 @@ const AdminDashboard = () => {
     setSeats([]);
     setViewMode("contestants");
     try {
-      const response = await axios.get("http://localhost:3002/contestant/getData");
+      const response = await axios.get("api/contestant/getData");
       setContestants(response.data.data);
     } catch (err) {
       setError(err.message);
@@ -94,7 +94,7 @@ const AdminDashboard = () => {
     setViewMode(status); 
 
     try {
-      const response = await axios.get(`http://localhost:3002/pending`, {
+      const response = await axios.get(`api/pending`, {
         params: { status }, 
       });
         const seats = response.data.data;
@@ -125,7 +125,7 @@ const AdminDashboard = () => {
   const handleApprove = async (seatId) => {
     try {
         const response = await axios.patch(
-            `http://localhost:3002/pending/${seatId}`,
+            `api/pending/${seatId}`,
             { status: "approved" }
         );
        
@@ -146,7 +146,7 @@ const AdminDashboard = () => {
   const handleReject = async (seatId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3002/pending/${seatId}`,
+        `api/pending/${seatId}`,
       );
 
       setSeats((prevSeats) => prevSeats.filter((seat) => seat._id !== seatId));

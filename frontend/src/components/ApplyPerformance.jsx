@@ -35,7 +35,7 @@ const ApplyPerformance = ({ isModalOpen, closeModal }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3002/contestant",
+        "api/contestant",
         formData
       );
       if (
