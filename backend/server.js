@@ -16,7 +16,6 @@ const path = require("path");
 app.use(cors());
 app.use(express.json());
 
-
 const contest = require("./routes/contest");
 app.use("/contestant", contest);
 
@@ -25,7 +24,6 @@ app.use("/admin", adminRouter);
 
 const pendingData = require("./routes/pending");
 app.use("/pending", pendingData);
-
 
 // app.post("/send-email", async (req, res) => {
 //   const { to, subject, body } = req.body;
@@ -55,26 +53,35 @@ app.use("/pending", pendingData);
 
 const Seat = require("./model/pendingSchema");
 
-cron.schedule("*/1 * * * *", async () => { // Runs every 5 minutes
+cron.schedule("*/1 * * * *", async () => {
+  // Runs every 1 minutes
   try {
     console.log("Checking for approved seats...");
-    
+
     const tempDir = path.join(__dirname, "temp");
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir, { recursive: true });
     }
-    // Find all users with approved status and email not sent
-    const approvedUsers = await Seat.find({ status: "approved", emailSent: false });
+    const approvedUsers = await Seat.find({
+      status: "approved",
+      emailSent: false,
+    });
 
     for (const user of approvedUsers) {
       const { name, rollNo, semester, seat, email, _id } = user;
 
-      // Generate the ID card and QR code as in the previous code
+      // Generate the ID card and QR code
       try {
         const uniqueId = _id.toString();
 
         // Generate QR Code
-        const qrData = JSON.stringify({ name, rollNo, semester, seat, uniqueId });
+        const qrData = JSON.stringify({
+          name,
+          rollNo,
+          semester,
+          seat,
+          uniqueId,
+        });
         const qrCodePath = `./temp/qrcode-${uniqueId}.png`;
         await QRCode.toFile(qrCodePath, qrData);
 
@@ -224,7 +231,9 @@ p {
 		<div class="id-card">
 			<h4 style="background: linear-gradient(to right, #f97316, #b91c1c); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Freshers 2024 <br/> Entry Card</h3>
 			<div class="header">
-				<img src="data:image/png;base64,${fs.readFileSync(qrCodePath, { encoding: 'base64' })}" alt="QR Code" style="width: 35mm; height: 35mm; margin-bottom: 5px;" >
+				<img src="data:image/png;base64,${fs.readFileSync(qrCodePath, {
+          encoding: "base64",
+        })}" alt="QR Code" style="width: 35mm; height: 35mm; margin-bottom: 5px;" >
 			</div>
       <h3 style="background: linear-gradient(to right, #f97316, #b91c1c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; size: 20px;">
     ${uniqueId}
@@ -245,28 +254,32 @@ p {
 	</div>
 `;
 
-const browser = await puppeteer.launch();
-const page = await browser.newPage();
-const widthInPx = Math.round(80 * 3.77953); // 85.6mm to pixels
-const heightInPx = Math.round(48 * 3.77953); // 54mm to pixels
+        const browser = await puppeteer.launch({
+          executablePath:
+            "C:/Program Files/Google/Chrome/Application/chrome.exe", // Update this path based on your OS
+          headless: true,
+        });
+        const page = await browser.newPage();
+        const widthInPx = Math.round(80 * 3.77953); // 85.6mm to pixels
+        const heightInPx = Math.round(48 * 3.77953); // 54mm to pixels
 
-await page.setViewport({ width: widthInPx, height: heightInPx });
-await page.setContent(idCardHtml, { waitUntil: "domcontentloaded" });
+        await page.setViewport({ width: widthInPx, height: heightInPx });
+        await page.setContent(idCardHtml, { waitUntil: "domcontentloaded" });
 
-const pdfPath = `./temp/idcard-${uniqueId}.pdf`;
-await page.pdf({
-  path: pdfPath,
-  printBackground: true,
-  format : "A4",
-  width: `${widthInPx}px`,
-  height: `${heightInPx}px`,
-  pageRanges: "1",
-});
-await browser.close();
+        const pdfPath = `./temp/idcard-${uniqueId}.pdf`;
+        await page.pdf({
+          path: pdfPath,
+          printBackground: true,
+          format: "A4",
+          width: `${widthInPx}px`,
+          height: `${heightInPx}px`,
+          pageRanges: "1",
+        });
+        await browser.close();
 
         // Send Email
         const transporter = nodemailer.createTransport({
-          service: "Gmail",
+          service: "gmail",
           auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS,
@@ -276,8 +289,8 @@ await browser.close();
         await transporter.sendMail({
           from: `"Freshers" <${process.env.EMAIL_USER}>`,
           to: email,
-         subject: "🎉 Welcome to the Freshers and Farewell Celebration! 🎓",
-  html: `
+          subject: "🎉 Welcome to the Freshers and Farewell Celebration! 🎓",
+          html: `
     <div style="font-family: Arial, sans-serif; color: #333;">
       <p>Dear <strong>${name}</strong>,</p>
       
