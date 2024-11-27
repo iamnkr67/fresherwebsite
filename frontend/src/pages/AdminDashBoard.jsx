@@ -6,7 +6,6 @@ import axios from "axios";
 import { Download, Home } from "lucide-react";
 import QrCode from "qrcode";
 
-
 const AdminDashboard = () => {
   const [contestants, setContestants] = useState([]);
   const [seats, setSeats] = useState([]);
@@ -25,7 +24,9 @@ const AdminDashboard = () => {
     setSeats([]);
     setViewMode("contestants");
     try {
-      const response = await axios.get("https://nalandafresher.onrender.com/contestant/getData");
+      const response = await axios.get(
+        "https://nalandafresher.onrender.com/contestant/getData",
+      );
       setContestants(response.data.data);
     } catch (err) {
       setError(err.message);
@@ -63,44 +64,56 @@ const AdminDashboard = () => {
   };
 
   const generateApprovedSeatsPDF = () => {
-  const doc = new jsPDF();
-  doc.setFontSize(18);
-  doc.text("Approved Seats List", 14, 20);
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text("Approved Seats List", 14, 20);
 
-  const tableColumn = ["Name", "Roll No", "Seat Number", "Semester", "Unique_ID"];
-  const tableRows = [];
+    const tableColumn = [
+      "Name",
+      "Roll No",
+      "Seat Number",
+      "Semester",
+      "Unique_ID",
+    ];
+    const tableRows = [];
 
-  approvedSeats.forEach((seat) => {
-    const seatUID = seat._id
-      ? seat._id.match(/.{1,4}/g).join("-") 
-      : "N/A"; 
+    approvedSeats.forEach((seat) => {
+      const seatUID = seat._id ? seat._id.match(/.{1,4}/g).join("-") : "N/A";
 
-    const rowData = [seat.name, seat.rollNo, seat.seat, seat.semester, seatUID];
-    tableRows.push(rowData);
-  });
-  doc.autoTable({
-    startY: 30,
-    head: [tableColumn],
-    body: tableRows,
-  });
-  doc.save("ApprovedSeatsList.pdf");
-};
+      const rowData = [
+        seat.name,
+        seat.rollNo,
+        seat.seat,
+        seat.semester,
+        seatUID,
+      ];
+      tableRows.push(rowData);
+    });
+    doc.autoTable({
+      startY: 30,
+      head: [tableColumn],
+      body: tableRows,
+    });
+    doc.save("ApprovedSeatsList.pdf");
+  };
 
   const handleSeats = async (status) => {
     setLoading(true);
     setError(null);
     setSeats([]);
     setApprovedSeats([]);
-    setViewMode(status); 
+    setViewMode(status);
 
     try {
-      const response = await axios.get(`https://nalandafresher.onrender.com/pending`, {
-        params: { status }, 
-      });
-        const seats = response.data.data;
-        setSeats(seats.filter((seat) => seat.status === "pending"));
-        setApprovedSeats(seats.filter((seat) => seat.status === "approved")); 
-    
+      const response = await axios.get(
+        `https://nalandafresher.onrender.com/pending`,
+        {
+          params: { status },
+        },
+      );
+      const seats = response.data.data;
+      setSeats(seats.filter((seat) => seat.status === "pending"));
+      setApprovedSeats(seats.filter((seat) => seat.status === "approved"));
     } catch (err) {
       if (err.response && err.response.status === 400)
         setError("No seats are booked");
@@ -121,26 +134,25 @@ const AdminDashboard = () => {
     setCurrentSeat(null);
     setDialogAction(null);
   };
-  
+
   const handleApprove = async (seatId) => {
     try {
-        const response = await axios.patch(
-            `https://nalandafresher.onrender.com/pending/${seatId}`,
-            { status: "approved" }
-        );
-       
-      const seat = approvedSeats.find(seat => seat._id === seatId);
+      const response = await axios.patch(
+        `https://nalandafresher.onrender.com/pending/${seatId}`,
+        { status: "approved" },
+      );
 
-       alert(response.data.message || "Seat approved successfully!");
-      handleSeats("pending"); 
-        handleSeats("approved"); 
-        closeConfirmationDialog();
+      const seat = approvedSeats.find((seat) => seat._id === seatId);
+
+      alert(response.data.message || "Seat approved successfully!");
+      handleSeats("pending");
+      handleSeats("approved");
+      closeConfirmationDialog();
     } catch (error) {
-        console.error("Error approving seat:", error);
-        alert("Failed to approve the seat. Please try again.");
+      console.error("Error approving seat:", error);
+      alert("Failed to approve the seat. Please try again.");
     }
-};
-
+  };
 
   // Reject seat
   const handleReject = async (seatId) => {
@@ -150,7 +162,7 @@ const AdminDashboard = () => {
       );
 
       setSeats((prevSeats) => prevSeats.filter((seat) => seat._id !== seatId));
-      alert(`Seat rejected successfully`)
+      alert(`Seat rejected successfully`);
       closeConfirmationDialog();
     } catch (error) {
       console.error("Error deleting seat:", error.message);
@@ -160,30 +172,32 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-900 text-white p-4">
-     
       <div className="flex flex-col md:flex-row items-center space-x-0 md:space-x-4 mb-8 text-center md:text-left">
         <Settings className="w-8 h-8 text-orange-500" />
         <h1 className="text-4xl font-bold">Admin Controls</h1>
         <Settings className="w-8 h-8 text-orange-500" />
       </div>
-      
+
       <div className="flex flex-wrap gap-4 justify-center mb-8">
         <button
           onClick={handleViewContestants}
-         className="bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-green-600 hover:to-green-800 transition duration-300"
+          className="bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-green-600 hover:to-green-800 transition duration-300"
         >
           View Contestants
         </button>
-        {viewMode === "contestants"  && (
-          <button
-            onClick={generateContestantsPDF}
-            className="bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-red-600 hover:to-red-800 transition duration-300">
-            Download Contestants PDF
-          </button>
-        )}
+        {viewMode === "contestants" &&
+          contestants.length >
+            0(
+              <button
+                onClick={generateContestantsPDF}
+                className="bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-red-600 hover:to-red-800 transition duration-300"
+              >
+                Download Contestants PDF
+              </button>,
+            )}
         <button
           onClick={() => handleSeats("pending")}
-         className="bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300"
+          className="bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300"
         >
           See Pending Seats
         </button>
@@ -197,7 +211,7 @@ const AdminDashboard = () => {
       </div>
       {loading && <p className="text-center">Loading...</p>}
       {error && <p className="text-red-500 text-center">{error}</p>}
-      {viewMode === "contestants"  && (
+      {viewMode === "contestants" && (
         <div className="overflow-x-auto w-full max-w-4xl mb-8">
           <h2 className="text-2xl font-semibold mb-4">Contestants</h2>
           <table className="w-full table-auto text-left border-collapse border border-gray-700">
@@ -324,7 +338,7 @@ const AdminDashboard = () => {
             <tbody>
               {approvedSeats.map((seat) => (
                 <tr key={seat._id} className="bg-gray-700 text-white">
-                   <td className="border border-gray-600 px-4 py-2">
+                  <td className="border border-gray-600 px-4 py-2">
                     {seat._id}
                   </td>
                   <td className="border border-gray-600 px-4 py-2">
