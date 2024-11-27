@@ -4,13 +4,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-<<<<<<< HEAD
     "start": "npx nodemon ./server.js",
     "build": "npm install -y"
-=======
-    "start": "node server.js",
-    "build": "npm install && npx nodemon ./server.js",
->>>>>>> 58306a40a5b6fc508c22521e7fdeca4de71b2afa
   },
   "keywords": [],
   "author": "",

@@ -26,9 +26,36 @@ app.use("/admin", adminRouter);
 const pendingData = require("./routes/pending");
 app.use("/pending", pendingData);
 
+
+// app.post("/send-email", async (req, res) => {
+//   const { to, subject, body } = req.body;
+
+//   try {
+//     const transporter = nodemailer.createTransport({
+//       service: "Gmail",
+//       auth: {
+//         user: process.env.EMAIL_USER,
+//         pass: process.env.EMAIL_PASS,
+//       },
+//     });
+
+//     await transporter.sendMail({
+//       from: `"Admin" <${process.env.EMAIL_USER}>`,
+//       to,
+//       subject,
+//       text: body,
+//     });
+
+//     res.status(200).send({ message: "Email sent successfully!" });
+//   } catch (error) {
+//     console.error("Error sending email:", error);
+//     res.status(500).send({ message: "Failed to send email" });
+//   }
+// });
+
 const Seat = require("./model/pendingSchema");
 
-cron.schedule("*/1 * * * *", async () => { // Runs every 10 minutes
+cron.schedule("*/1 * * * *", async () => { // Runs every 5 minutes
   try {
     console.log("Checking for approved seats...");
     
@@ -44,7 +71,7 @@ cron.schedule("*/1 * * * *", async () => { // Runs every 10 minutes
 
       // Generate the ID card and QR code as in the previous code
       try {
-		  const uniqueId = _id.toString();
+        const uniqueId = _id.toString();
 
         // Generate QR Code
         const qrData = JSON.stringify({ name, rollNo, semester, seat, uniqueId });
@@ -218,10 +245,7 @@ p {
 	</div>
 `;
 
-const browser = await puppeteer.launch({
-  executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
-  args: ['--no-sandbox', '--disable-setuid-sandbox'],
-});
+const browser = await puppeteer.launch();
 const page = await browser.newPage();
 const widthInPx = Math.round(80 * 3.77953); // 85.6mm to pixels
 const heightInPx = Math.round(48 * 3.77953); // 54mm to pixels
@@ -242,15 +266,11 @@ await browser.close();
 
         // Send Email
         const transporter = nodemailer.createTransport({
-			host: "smtp.gmail.com",
-			port:587,
-			secure:false,
+          service: "Gmail",
           auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS,
-			},
-			debug: true,
-		    logger: true,
+          },
         });
 
         await transporter.sendMail({
@@ -264,8 +284,8 @@ await browser.close();
       <p>🎊 You are warmly invited to the <strong>Freshers and Farewell Celebration 2024</strong> hosted by the Department of English, Nalanda College. 🎉</p>
 
       <p>✨ <strong>Your seat is confirmed!</strong>  
-      🎟️ <strong>Seat No:</strong> ${seat}<br/>
-	      <strong>Your UniqueID code:</strong> ${uniqueId}</p>
+      🎟️ <strong>Seat No:</strong> ${seat} 
+	  🪪 <strong>Unique ID: </strong> ${uniqueId} </p>
 
       <p>We are thrilled to have you join us as we celebrate this special occasion filled with joy, memories, and new beginnings. 🌟</p>
 
@@ -277,7 +297,7 @@ await browser.close();
       </ul>
 
       <p>📅 <strong>Mark Your Calendar</strong>:</p>
-      <p>🗓️ Date: Yet to be Announced...</p>
+      <p>🗓️ Date: Soon to be announced...</p>
       <p>📍 Venue: Auditorium, Nalanda College</p>
 
       <p>See you there!</p>
@@ -290,7 +310,7 @@ await browser.close();
   `,
           attachments: [
             {
-              filename: `${name}-Entry-ID-Card.pdf`,
+              filename: `${name}-ID-Card-${uniqueId}.pdf`,
               path: pdfPath,
             },
           ],
@@ -300,9 +320,8 @@ await browser.close();
         await Seat.findByIdAndUpdate(user._id, { emailSent: true });
 
         // Cleanup Temp Files
-       await fs.promises.unlink(qrCodePath).catch((err) => console.error("Error deleting QR code file:", err));
-       await fs.promises.unlink(pdfPath).catch((err) => console.error("Error deleting PDF file:", err));
-
+        fs.unlinkSync(qrCodePath);
+        fs.unlinkSync(pdfPath);
 
         console.log(`Email sent to ${email}`);
       } catch (err) {
