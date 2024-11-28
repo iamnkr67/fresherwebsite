@@ -68,52 +68,41 @@ const AdminDashboard = () => {
     doc.setFontSize(18);
     doc.text("Approved Seats List", 14, 20);
 
-    const tableColumn = [
-      "Name",
-      "Roll No",
-      "Seat Number",
-      "Semester",
-      "Unique_ID",
-    ];
+    const tableColumn = ["Name", "Roll No", "Seat Number", "Semester"];
     const tableRows = [];
 
     approvedSeats.forEach((seat) => {
-      const seatUID = seat._id ? seat._id.match(/.{1,4}/g).join("-") : "N/A";
-
-      const rowData = [
-        seat.name,
-        seat.rollNo,
-        seat.seat,
-        seat.semester,
-        seatUID,
-      ];
+      const rowData = [seat.name, seat.rollNo, seat.seat, seat.semester];
       tableRows.push(rowData);
     });
+
     doc.autoTable({
       startY: 30,
       head: [tableColumn],
       body: tableRows,
     });
+
     doc.save("ApprovedSeatsList.pdf");
   };
 
+  // Fetch seats (pending and approved) based on status
   const handleSeats = async (status) => {
     setLoading(true);
     setError(null);
     setSeats([]);
     setApprovedSeats([]);
-    setViewMode(status);
+    setViewMode(status); // This will help toggle between pending and approved view
 
     try {
       const response = await axios.get(
         `https://nalandafresher.onrender.com/pending`,
         {
-          params: { status },
+          params: { status }, // Sending the status to the backend
         },
       );
       const seats = response.data.data;
       setSeats(seats.filter((seat) => seat.status === "pending"));
-      setApprovedSeats(seats.filter((seat) => seat.status === "approved"));
+      setApprovedSeats(seats.filter((seat) => seat.status === "approved")); // Approved seats
     } catch (err) {
       if (err.response && err.response.status === 400)
         setError("No seats are booked");
@@ -123,12 +112,14 @@ const AdminDashboard = () => {
     }
   };
 
+  // Open confirmation dialog
   const openConfirmationDialog = (seatId, action) => {
     setCurrentSeat(seatId);
     setDialogAction(action);
     setOpenDialog(true);
   };
 
+  // Close confirmation dialog
   const closeConfirmationDialog = () => {
     setOpenDialog(false);
     setCurrentSeat(null);
@@ -171,50 +162,48 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-900 text-white p-4">
-      <div className="flex flex-col md:flex-row items-center space-x-0 md:space-x-4 mb-8 text-center md:text-left">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-4">
+      <div className="flex items-center space-x-4 mb-8">
         <Settings className="w-8 h-8 text-orange-500" />
         <h1 className="text-4xl font-bold">Admin Controls</h1>
         <Settings className="w-8 h-8 text-orange-500" />
       </div>
 
-      <div className="flex flex-wrap gap-4 justify-center mb-8">
+      <div className="space-y-4 mb-8">
         <button
           onClick={handleViewContestants}
           className="bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-green-600 hover:to-green-800 transition duration-300"
         >
           View Contestants
         </button>
-        {viewMode === "contestants" &&
-          contestants.length >
-            0(
-              <button
-                onClick={generateContestantsPDF}
-                className="bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-red-600 hover:to-red-800 transition duration-300"
-              >
-                Download Contestants PDF
-              </button>,
-            )}
+        {viewMode === "contestants" && contestants.length > 0 && (
+          <button
+            onClick={generateContestantsPDF}
+            className="bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-red-600 hover:to-red-800 transition duration-300 ml-4"
+          >
+            Download Contestants PDF
+          </button>
+        )}
         <button
           onClick={() => handleSeats("pending")}
-          className="bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300"
+          className="bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300 ml-4"
         >
           See Pending Seats
         </button>
 
         <button
           onClick={() => handleSeats("approved")}
-          className="bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-purple-600 hover:to-purple-800 transition duration-300"
+          className="bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-purple-600 hover:to-purple-800 transition duration-300 ml-4"
         >
           See Approved Seats
         </button>
       </div>
-      {loading && <p className="text-center">Loading...</p>}
-      {error && <p className="text-red-500 text-center">{error}</p>}
-      {viewMode === "contestants" && (
-        <div className="overflow-x-auto w-full max-w-4xl mb-8">
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+      {viewMode === "contestants" && contestants.length > 0 && (
+        <div className="w-full max-w-4xl mb-8">
           <h2 className="text-2xl font-semibold mb-4">Contestants</h2>
-          <table className="w-full table-auto text-left border-collapse border border-gray-700">
+          <table className="w-full text-left border-collapse border border-gray-700">
             <thead>
               <tr className="bg-gray-800">
                 <th className="border border-gray-600 px-4 py-2">Roll No</th>
@@ -250,11 +239,11 @@ const AdminDashboard = () => {
       )}
       {/* seats.length > 0 */}
       {viewMode === "pending" && (
-        <div className="overflow-x-auto w-full max-w-4xl">
+        <div className="w-full max-w-4xl mx-auto">
           <h2 className="text-2xl font-semibold mb-4 text-center">
             Pending Seat Requests
           </h2>
-          <table className="w-full table-auto text-left border-collapse border border-gray-700">
+          <table className="w-full text-left border-collapse border border-gray-700">
             <thead>
               <tr className="bg-gray-800 text-white">
                 <th className="border border-gray-600 px-4 py-2">Name</th>
@@ -287,7 +276,7 @@ const AdminDashboard = () => {
                   </td>
                   <td className="border border-gray-600 px-4 py-2">
                     <button
-                      className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded mb-2"
+                      className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded"
                       onClick={() =>
                         openConfirmationDialog(seat._id, "approve")
                       }
@@ -295,7 +284,7 @@ const AdminDashboard = () => {
                       Approve
                     </button>
                     <button
-                      className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded ml-2 mb-2"
+                      className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded ml-2"
                       onClick={() => openConfirmationDialog(seat._id, "reject")}
                     >
                       Reject
@@ -309,7 +298,7 @@ const AdminDashboard = () => {
       )}
       {/* && approvedSeats.length > 0 */}
       {viewMode === "approved" && (
-        <div className="overflow-x-auto w-full max-w-4xl mx-auto">
+        <div className="w-full max-w-4xl mx-auto">
           <h2 className="text-2xl font-semibold mb-4 text-center">
             Approved Seat Requests
           </h2>
@@ -323,7 +312,7 @@ const AdminDashboard = () => {
               <Download className="w-5 h-5 mr-2" />
             </button>
           )}
-          <table className="w-full table-auto text-left border-collapse border border-gray-700">
+          <table className="w-full text-left border-collapse border border-gray-700">
             <thead>
               <tr className="bg-gray-800 text-white">
                 <th className="border border-gray-600 px-4 py-2">Unique ID</th>
