@@ -3,8 +3,7 @@ import { Settings } from "lucide-react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import axios from "axios";
-import { Download, Home } from "lucide-react";
-import QrCode from "qrcode";
+import { Download } from "lucide-react";
 
 const AdminDashboard = () => {
   const [contestants, setContestants] = useState([]);
@@ -237,28 +236,21 @@ const AdminDashboard = () => {
           </table>
         </div>
       )}
-      {/* seats.length > 0 */}
       {viewMode === "pending" && (
         <div className="w-full max-w-4xl mx-auto">
-          <h2 className="text-2xl font-semibold mb-4 text-center">
-            Pending Seat Requests
-          </h2>
+          <h2 className="text-2xl font-semibold mb-4">Pending Seat Requests</h2>
           <table className="w-full text-left border-collapse border border-gray-700">
             <thead>
-              <tr className="bg-gray-800 text-white">
+              <tr className="bg-gray-800">
                 <th className="border border-gray-600 px-4 py-2">Name</th>
                 <th className="border border-gray-600 px-4 py-2">Roll No</th>
-                <th className="border border-gray-600 px-4 py-2">
-                  Seat Number
-                </th>
                 <th className="border border-gray-600 px-4 py-2">Semester</th>
-                <th className="border border-gray-600 px-4 py-2">Status</th>
-                <th className="border border-gray-600 px-4 py-2">Actions</th>
+                <th className="border border-gray-600 px-4 py-2">Action</th>
               </tr>
             </thead>
             <tbody>
               {seats.map((seat) => (
-                <tr key={seat._id} className="bg-gray-700 text-white">
+                <tr key={seat._id} className="bg-gray-700">
                   <td className="border border-gray-600 px-4 py-2">
                     {seat.name}
                   </td>
@@ -266,26 +258,18 @@ const AdminDashboard = () => {
                     {seat.rollNo}
                   </td>
                   <td className="border border-gray-600 px-4 py-2">
-                    {seat.seat}
-                  </td>
-                  <td className="border border-gray-600 px-4 py-2">
                     {seat.semester}
                   </td>
                   <td className="border border-gray-600 px-4 py-2">
-                    {seat.status}
-                  </td>
-                  <td className="border border-gray-600 px-4 py-2">
                     <button
-                      className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded"
-                      onClick={() =>
-                        openConfirmationDialog(seat._id, "approve")
-                      }
+                      onClick={() => openConfirmationDialog(seat._id, "approve")}
+                      className="bg-green-500 text-white px-4 py-2 rounded-lg mr-2"
                     >
                       Approve
                     </button>
                     <button
-                      className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded ml-2"
                       onClick={() => openConfirmationDialog(seat._id, "reject")}
+                      className="bg-red-500 text-white px-4 py-2 rounded-lg"
                     >
                       Reject
                     </button>
@@ -296,40 +280,29 @@ const AdminDashboard = () => {
           </table>
         </div>
       )}
-      {/* && approvedSeats.length > 0 */}
       {viewMode === "approved" && (
         <div className="w-full max-w-4xl mx-auto">
-          <h2 className="text-2xl font-semibold mb-4 text-center">
-            Approved Seat Requests
-          </h2>
-
-          {viewMode === "approved" && approvedSeats.length > 0 && (
+          <h2 className="text-2xl font-semibold mb-4">Approved Seat Requests</h2>
+          {approvedSeats.length > 0 && (
             <button
               onClick={generateApprovedSeatsPDF}
-              className="flex items-center bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-red-600 hover:to-red-800 transition duration-300 mr-4 mb-4"
+              className="bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-red-600 hover:to-red-800 transition duration-300 mb-4"
             >
               Approved PDF
-              <Download className="w-5 h-5 mr-2" />
             </button>
           )}
           <table className="w-full text-left border-collapse border border-gray-700">
             <thead>
-              <tr className="bg-gray-800 text-white">
-                <th className="border border-gray-600 px-4 py-2">Unique ID</th>
+              <tr className="bg-gray-800">
                 <th className="border border-gray-600 px-4 py-2">Name</th>
                 <th className="border border-gray-600 px-4 py-2">Roll No</th>
-                <th className="border border-gray-600 px-4 py-2">
-                  Seat Number
-                </th>
                 <th className="border border-gray-600 px-4 py-2">Semester</th>
+                <th className="border border-gray-600 px-4 py-2">Seat No</th>
               </tr>
             </thead>
             <tbody>
               {approvedSeats.map((seat) => (
-                <tr key={seat._id} className="bg-gray-700 text-white">
-                  <td className="border border-gray-600 px-4 py-2">
-                    {seat._id}
-                  </td>
+                <tr key={seat._id} className="bg-gray-700">
                   <td className="border border-gray-600 px-4 py-2">
                     {seat.name}
                   </td>
@@ -337,10 +310,10 @@ const AdminDashboard = () => {
                     {seat.rollNo}
                   </td>
                   <td className="border border-gray-600 px-4 py-2">
-                    {seat.seat}
+                    {seat.semester}
                   </td>
                   <td className="border border-gray-600 px-4 py-2">
-                    {seat.semester}
+                    {seat.seat}
                   </td>
                 </tr>
               ))}
@@ -350,10 +323,11 @@ const AdminDashboard = () => {
       )}
       {openDialog && (
         <div className="fixed inset-0 flex justify-center items-center bg-gray-700 bg-opacity-50">
-          <div className="bg-white text-black p-8 rounded-lg">
-            <p>
+          <div className="bg-white text-black p-6 sm:p-8 rounded-lg">
+            <p className="text-center">
               Are you sure you want to{" "}
-              {dialogAction === "approve" ? "approve" : "reject"} this seat?
+              <strong>{dialogAction === "approve" ? "approve" : "reject"}</strong>{" "}
+              this seat?
             </p>
             <div className="flex justify-between mt-4">
               <button
@@ -362,13 +336,13 @@ const AdminDashboard = () => {
                     ? () => handleApprove(currentSeat)
                     : () => handleReject(currentSeat)
                 }
-                className="bg-green-500 text-white px-6 py-2 rounded-lg"
+                className="bg-green-500 text-white px-4 py-2 rounded-lg"
               >
                 Confirm
               </button>
               <button
                 onClick={closeConfirmationDialog}
-                className="bg-gray-500 text-white px-6 py-2 rounded-lg"
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg ml-2"
               >
                 Cancel
               </button>
