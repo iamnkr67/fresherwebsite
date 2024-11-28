@@ -162,9 +162,9 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-4">
-      <div className="flex items-center space-x-4 mb-8">
+      <div className="flex items-center space-x-4 mb-8 flex-nowrap">
         <Settings className="w-8 h-8 text-orange-500" />
-        <h1 className="text-4xl font-bold">Admin Controls</h1>
+        <h1 className="text-4xl font-bold whitespace-nowrap">Admin Controls</h1>
         <Settings className="w-8 h-8 text-orange-500" />
       </div>
 
