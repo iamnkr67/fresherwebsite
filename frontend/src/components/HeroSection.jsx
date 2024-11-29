@@ -25,14 +25,12 @@ const HeroSection = () => {
         Your browser does not support the video tag.
       </video>
       <h1 className="text-4xl sm:text-6xl lg:text-7xl text-center tracking-wide">
-        <span className="inline-block overflow-hidden whitespace-nowrap border-r-2 border-orange-500 animate-typing">
-          Fresher's & Farewell Party 2024
-        </span>
-        <span className="block bg-gradient-to-r from-orange-500 to-red-800 text-transparent bg-clip-text animate-fade-in">
+        Fresher's & Farewell Party 2024
+        <span className="bg-gradient-to-r from-orange-500 to-red-800 text-transparent bg-clip-text">
+          {" "}
           for English Department
         </span>
       </h1>
-
       <p className="mt-10 text-lg text-center text-neutral-500 max-w-4xl">
         A day of rhythm, movement, and friendship awaits you at the College
         Auditorium-be part of the magic!
