@@ -19,7 +19,9 @@ const SeatLayout = () => {
   useEffect(() => {
     const fetchSeats = async () => {
       try {
-        const res = await axios.get("https://nalandafresher.onrender.com/pending");
+        const res = await axios.get(
+          "https://nalandafresher.onrender.com/pending",
+        );
         const pendingSeats = res.data.data.reduce((acc, seat) => {
           acc[seat.seat] = seat.status;
           return acc;
@@ -79,10 +81,13 @@ const SeatLayout = () => {
       return;
     }
     try {
-      const response = await axios.post("https://nalandafresher.onrender.com/pending/", {
-        seat: selectedSeat,
-        ...formData,
-      });
+      const response = await axios.post(
+        "https://nalandafresher.onrender.com/pending/",
+        {
+          seat: selectedSeat,
+          ...formData,
+        },
+      );
       console.log(response.data.message);
 
       toast.success(`Seat ${selectedSeat} successfully added!`);
@@ -97,7 +102,7 @@ const SeatLayout = () => {
             "Roll number already exists. Please enter a different one.",
           );
         } else {
-          toast.error(error.response.data.message); 
+          toast.error(error.response.data.message);
         }
       } else {
         toast.error("An error occurred. Please try again.");
@@ -116,17 +121,15 @@ const SeatLayout = () => {
           className="toast-container"
         />
       </div>
-      <h1 class="text-center text-2xl font-bold mb-4">
+
+      <div class="rounded-lg w-60 h-16 mb-4 flex text-center font-bold items-center justify-center text-lg text-red-500 mx-0.5 border border-gray-300">
         <i class="fas fa-film"></i> &nbsp; Book Your Seats Now!
-      </h1>
-      <div class="rounded-lg w-60 h-16 mb-4 flex text-center font-bold items-center justify-center text-lg text-red-500 mx-0.5 border border-orange-300">
-        All eyes this way please!
       </div>
       <div class="w-full flex items-center justify-between mb-4 relative">
-        <span class="text-blue-500 font-bold ml-4 mr-2 md:mx-auto">
+        <span class="text-blue-400 font-bold ml-4 mr-2 md:mx-auto">
           ← For boys
         </span>
-        <span class="text-pink-500 font-bold ml-2 mr-4 md:mx-auto">
+        <span class="text-pink-400 font-bold ml-2 mr-4 md:mx-auto">
           For girls →
         </span>
       </div>
@@ -471,10 +474,11 @@ const SeatLayout = () => {
                   </div>
                 ))}
                 {/* Gap between K9 and K8 */}
-                <div className="w-6"></div>{"   "}
+                <div className="w-6"></div>
+                {"   "}
                 {/* Adjust this width for the gap */}
                 {/* K section continues */}
-                {["K9","K8", "K7", "K6", "K5", "K4", "K3", "K2", "K1"].map(
+                {["K9", "K8", "K7", "K6", "K5", "K4", "K3", "K2", "K1"].map(
                   (seat, index) => (
                     <div
                       key={index}
