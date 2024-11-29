@@ -2,7 +2,22 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+        typing: {
+          "0%": { width: "0%" },
+          "100%": { width: "100%" },
+        },
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+      },
+      animation: {
+        typing: "typing 4s steps(30, end), blink 0.75s step-end infinite",
+        "fade-in": "fadeIn 2s ease-in-out",
+      },
+    },
   },
   plugins: [],
 };
