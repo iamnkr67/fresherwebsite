@@ -20,6 +20,11 @@ const contestantSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    program: {
+      type: String,
+      required: true,
+      enum: ["ug", "pg"],
+    },
     act: {
       type: String,
       required: true,
