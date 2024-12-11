@@ -10,6 +10,7 @@ const ApplyPerformance = ({ isModalOpen, closeModal }) => {
     rollNo: "",
     phone: "",
     year: "",
+    program:"",
     act: "",
   });
 
@@ -125,6 +126,19 @@ const ApplyPerformance = ({ isModalOpen, closeModal }) => {
             <option value="stand-up comedy">Stand-Up Comedy</option>
             <option value="others">Others</option>
           </select>
+          <select
+            name="program"
+            required
+            className="block w-full px-4 py-3 bg-zinc-700 text-white border border-zinc-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition duration-300"
+            value={formData.program}
+            onChange={handleChange}
+          >
+            <option value="" disabled>
+              Select Program
+            </option>
+            <option value="ug">UG</option>
+            <option value="pg">PG</option>
+          </select>
           <button
             type="submit"
             className="w-full py-3 mt-6 text-white font-semibold rounded-lg shadow-md transition duration-300 bg-gradient-to-r from-orange-500 to-red-800 hover:from-orange-200 hover:to-orange-800"
@@ -152,9 +166,9 @@ const ApplyPerformance = ({ isModalOpen, closeModal }) => {
             <button
               className="mt-6 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-700 transition duration-300"
               onClick={() => {
-    setSuccessDialog(false);
-    closeModal();
-  }}
+                setSuccessDialog(false);
+                closeModal();
+              }}
             >
               Okay
             </button>
