@@ -24,11 +24,14 @@ const HeroSection = () => {
         <source src={bgvideo} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      <h1 className="text-4xl sm:text-6xl lg:text-7xl text-center tracking-wide">
-        Fresher's & Farewell Party 2024
-        <span className="bg-gradient-to-r from-orange-500 to-red-800 text-transparent bg-clip-text">
+      <h1 className="text-4xl sm:text-6xl lg:text-6xl text-center tracking-wide">
+        Fresher's & Farewell Party
+        <br></br>
+        <span className="bg-gradient-to-r from-orange-500 to-red-800 text-transparent  bg-clip-text">
           {" "}
-          for English Department
+          for Department of English
+          <br></br>
+          2025
         </span>
       </h1>
       <p className="mt-10 text-lg text-center text-neutral-500 max-w-4xl">
