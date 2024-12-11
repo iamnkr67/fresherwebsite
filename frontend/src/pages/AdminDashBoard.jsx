@@ -40,7 +40,7 @@ const AdminDashboard = () => {
     doc.setFontSize(18);
     doc.text("Contestants List", 14, 20);
 
-    const tableColumn = ["Roll No", "Name", "Phone", "Year", "Act"];
+    const tableColumn = ["Roll No", "Name", "Phone", "Year", "Act", "Program"];
     const tableRows = [];
 
     contestants.forEach((contestant) => {
@@ -50,6 +50,7 @@ const AdminDashboard = () => {
         contestant.phone,
         contestant.year,
         contestant.act,
+        contestant.program,
       ];
       tableRows.push(rowData);
     });
@@ -211,6 +212,7 @@ const AdminDashboard = () => {
                 <th className="border border-gray-600 px-4 py-2">Phone</th>
                 <th className="border border-gray-600 px-4 py-2">Year</th>
                 <th className="border border-gray-600 px-4 py-2">Act</th>
+                <th className="border border-gray-600 px-4 py-2">Program</th>
               </tr>
             </thead>
             <tbody>
@@ -230,6 +232,9 @@ const AdminDashboard = () => {
                   </td>
                   <td className="border border-gray-600 px-4 py-2">
                     {contestant.act}
+                  </td>
+                  <td className="border border-gray-600 px-4 py-2">
+                    {contestant.program}
                   </td>
                 </tr>
               ))}
