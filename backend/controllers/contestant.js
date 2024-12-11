@@ -2,15 +2,20 @@ const Contestant = require("../model/contestantSchema");
 
 const add = async (req, res) => {
   try {
-    const { name, rollNo, phone, year, act } = req.body;
+    const { name, rollNo, phone, year, act, program } = req.body;
 
-    if (!name || !rollNo || !phone || !year || !act) {
+    if (!name || !rollNo || !phone || !year || !act || !program) {
       return res.status(400).json({ message: "All fields are required." });
     }
 
-   
-
-    const newContestant = new Contestant({ name, rollNo, phone, year, act });
+    const newContestant = new Contestant({
+      name,
+      rollNo,
+      phone,
+      year,
+      act,
+      program,
+    });
     await newContestant.save();
 
     return res
