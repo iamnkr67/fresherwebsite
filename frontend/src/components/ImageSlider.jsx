@@ -10,16 +10,7 @@ import image6 from "../assets/momentsFresher/image6.jpg";
 import image7 from "../assets/momentsFresher/image7.jpg";
 
 const ImageSlider = () => {
-  const images = [
-    image1,
-    image2,
-    image3,
-    image4,
-    image5,
-    image6,
-    image7,
-
-  ]; // Array of images
+  const images = [image1, image2, image3, image4, image5, image6, image7]; // Array of images
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [headingVisible, setHeadingVisible] = useState(false);
@@ -96,7 +87,7 @@ const ImageSlider = () => {
           {images.map((image, index) => (
             <div
               key={index}
-              className={`object-cover w-full h-[400px] flex-shrink-0 rounded-lg shadow-lg transform transition-transform duration-[600ms] ${
+              className={`object-cover w-full h-full flex-shrink-0 rounded-lg shadow-lg transform transition-transform duration-[600ms] ${
                 currentIndex === index
                   ? "translate-y-0"
                   : "translate-y-10 opacity-50"
@@ -105,7 +96,7 @@ const ImageSlider = () => {
               <img
                 src={image}
                 alt={`Slide ${index}`}
-                className="w-full h-full object-cover rounded-lg"
+                className="w-full h-full object-fit rounded-lg"
               />
             </div>
           ))}
