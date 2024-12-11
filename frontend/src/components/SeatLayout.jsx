@@ -122,9 +122,24 @@ const SeatLayout = () => {
         />
       </div>
 
-      <div class="rounded-lg w-60 h-16 mb-4 flex text-center font-bold items-center justify-center text-lg text-red-500 mx-0.5 border border-gray-300">
-        <i class="fas fa-film"></i> &nbsp; Book Your Seats Now!
+      <div className="rounded-lg w-60 h-auto mb-4 flex text-center font-bold items-center justify-center text-lg text-red-500 mx-0.5 border border-gray-300">
+        <i className="fas fa-film"></i> &nbsp;
+        <div className="text-left">
+          <p className="text-sm m-2">
+            <strong>A, B, C:</strong>{" "}
+            <span className="text-white">Farewell Students</span>
+          </p>
+          <p className="text-sm m-2">
+            <strong>I, J, K:</strong>{" "}
+            <span className="text-white">Freshers</span>
+          </p>
+
+          <div className="text-center text-orange-500 font-semibold">
+            Book Your Seats Now!
+          </div>
+        </div>
       </div>
+
       <div class="w-full flex items-center justify-between mb-4 relative">
         <span class="text-blue-400 font-bold ml-4 mr-2 md:mx-auto">
           ← For boys
