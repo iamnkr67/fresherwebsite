@@ -10,10 +10,10 @@ const addPendingStatus = async (req, res) => {
 
     const newPending = new Pending({name,rollNo,email,semester,seat});
 
-    const rollData = await Pending.findOne({ rollNo });
-    if (rollData) {
-      return res.status(400).json({ message: "Roll number already booked." });
-    }
+    // const rollData = await Pending.findOne({ rollNo });
+    // if (rollData) {
+    //   return res.status(400).json({ message: "Roll number already booked." });
+    // }
     await newPending.save();
     return res.status(201).json({ msg: "Pending data Submitted Successfully" });
   } catch (error) {
