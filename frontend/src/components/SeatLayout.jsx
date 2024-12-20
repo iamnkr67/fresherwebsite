@@ -660,16 +660,23 @@ const SeatLayout = () => {
               )}
 
               <div className="relative">
-                <input
-                  type="text"
+                <select
                   id="semester"
                   name="semester"
-                  placeholder="Semester"
                   value={formData.semester}
                   onChange={handleChange}
                   required
                   className="block w-full px-4 py-3 bg-zinc-700 text-white border border-zinc-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition duration-300"
-                />
+                >
+                  <option value="" disabled>
+                    Select Semester
+                  </option>
+                  <option value="UG-sem1">UG SEM1</option>
+                  <option value="UG-3rd year">UG 3rd YEAR</option>
+                  <option value="UG-sem2">UG SEM2</option>
+                  <option value="PG-sem1">PG SEM1</option>
+                  <option value="PG-sem3">PG SEM3</option>
+                </select>
               </div>
 
               {/* Submit and Cancel Buttons */}
