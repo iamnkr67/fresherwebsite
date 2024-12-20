@@ -17,6 +17,7 @@ const pendingSchema = new mongoose.Schema({
   semester: {
     type: String,
     required: true,
+    enum: ["UG-sem1", "UG-3rd year", "UG-sem2", "PG-sem1", "PG-sem3"], 
   },
   seat: {
     type: String,
@@ -26,7 +27,7 @@ const pendingSchema = new mongoose.Schema({
     type: String,
     default: "pending", // Default value for status
   },
-   emailSent: {
+  emailSent: {
     type: Boolean,
     default: false, // To track if the email has been sent
   },
