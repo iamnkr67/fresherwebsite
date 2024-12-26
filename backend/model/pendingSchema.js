@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const pendingSchema = new mongoose.Schema({
   name: {
@@ -8,16 +8,7 @@ const pendingSchema = new mongoose.Schema({
   rollNo: {
     type: String,
     required: true,
-    validate: function (value) {
-      if (this.semester.startsWith("UG-")) {
-        return /^\d{3}$/.test(value);
-      } else if (this.semester.startsWith("PG-")) {
-        return /^PG-\d{3} $ /.test(value);
-      }
-      return false;
-    },
-    message: (props) =>
-      `Invalid roll number : ${props.value} for the given semester.`,
+    match: /^\d{3}$/,
   },
   email: {
     type: String,
@@ -26,7 +17,7 @@ const pendingSchema = new mongoose.Schema({
   semester: {
     type: String,
     required: true,
-    enum: ["UG-sem1", "UG-3rd year", "UG-sem2", "PG-sem1", "PG-sem3"],
+    enum: ["UG-sem1", "UG-3rd year", "UG-sem2", "PG-sem1", "PG-sem3"], 
   },
   seat: {
     type: String,
